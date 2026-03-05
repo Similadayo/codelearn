@@ -1,9 +1,10 @@
 'use client';
 import { useAuth } from '@/context/AuthContext';
 import { useAppData } from '@/context/AppDataContext';
-import { curriculumData } from '@/constants/curriculum';
+import { curriculumData, backendLanguages } from '@/constants/curriculum';
 import { getMockContent } from '@/lib/content';
 import { useState } from 'react';
+import { useSearchParams } from 'next/navigation';
 import ReactMarkdown from 'react-markdown';
 import Link from 'next/link';
 import {
@@ -23,6 +24,9 @@ export default function TopicPage({ params }: TopicPageProps) {
   const { trackId, moduleId, topicId } = params;
   const { user } = useAuth();
   const { progress, markTopicCompleted, submitExercise, submissions } = useAppData();
+  const searchParams = useSearchParams();
+  const selectedLang = searchParams.get('lang') || '';
+  const selectedLangInfo = backendLanguages.find(l => l.id === selectedLang);
 
   const [codeData, setCodeData] = useState('');
   const [submitted, setSubmitted] = useState(false);
@@ -31,7 +35,7 @@ export default function TopicPage({ params }: TopicPageProps) {
   const moduleInfo = track?.modules.find(m => m.id === moduleId);
   const topic = moduleInfo?.topics.find(t => t.id === topicId);
   const topicIndex = moduleInfo?.topics.findIndex(t => t.id === topicId) ?? 0;
-  const content = getMockContent(trackId, moduleId, topicId);
+  const content = getMockContent(trackId, moduleId, topicId, selectedLang);
 
   const exerciseId = `${topicId}_${user?.id || 'guest'}`;
   const existingSubmission = submissions[exerciseId];

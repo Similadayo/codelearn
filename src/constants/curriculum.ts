@@ -2,6 +2,7 @@ export interface Topic {
     id: string;
     title: string;
     contentRef: string;
+    langSpecific?: boolean; // if true, content changes based on selected language
 }
 
 export interface Module {
@@ -11,11 +12,21 @@ export interface Module {
     topics: Topic[];
 }
 
+export interface BackendLanguage {
+    id: string;
+    name: string;
+    framework: string;
+    tagline: string;
+    color: string;
+    emoji: string;
+}
+
 export interface Track {
     id: string;
     title: string;
     description: string;
     icon: string;
+    supportedLanguages?: BackendLanguage[];
     modules: Module[];
 }
 
@@ -23,66 +34,183 @@ export interface CurriculumData {
     tracks: Track[];
 }
 
+export const backendLanguages: BackendLanguage[] = [
+    {
+        id: 'nodejs',
+        name: 'JavaScript / Node.js',
+        framework: 'Express.js',
+        tagline: 'Most in-demand. Powers the entire JavaScript ecosystem end-to-end.',
+        color: '#f7df1e',
+        emoji: '⚡',
+    },
+    {
+        id: 'python',
+        name: 'Python',
+        framework: 'FastAPI / Django',
+        tagline: 'Beginner-friendly. Dominant in data science, AI, and startups.',
+        color: '#3b82f6',
+        emoji: '🐍',
+    },
+    {
+        id: 'go',
+        name: 'Go (Golang)',
+        framework: 'Gin / Fiber',
+        tagline: 'Blazing fast. Built for cloud-native, scalable systems.',
+        color: '#00acd7',
+        emoji: '🚀',
+    },
+    {
+        id: 'java',
+        name: 'Java',
+        framework: 'Spring Boot',
+        tagline: 'Enterprise standard. Used at banks, telecoms, and large corporations.',
+        color: '#f89820',
+        emoji: '☕',
+    },
+    {
+        id: 'php',
+        name: 'PHP',
+        framework: 'Laravel',
+        tagline: 'Powers 77% of the web. Fast to deploy, huge job market.',
+        color: '#8892be',
+        emoji: '🐘',
+    },
+    {
+        id: 'ruby',
+        name: 'Ruby',
+        framework: 'Ruby on Rails',
+        tagline: 'Convention over configuration. Beloved for rapid prototyping.',
+        color: '#cc342d',
+        emoji: '💎',
+    },
+];
+
 export const curriculumData: CurriculumData = {
     tracks: [
         {
             id: 'backend',
             title: 'Backend Engineering',
-            description: 'Master server-side development from initial request to highly available distributed systems.',
+            description: 'Master server-side development — from your first line of code to designing distributed systems at scale.',
             icon: 'Server',
+            supportedLanguages: backendLanguages,
             modules: [
                 {
-                    id: 'novice',
-                    title: 'Novice (The Foundations)',
-                    description: 'Understanding the core concepts of the internet and basic programming.',
+                    id: 'phase1',
+                    title: 'Phase 1 — Language Foundations',
+                    description: 'Master your chosen language from scratch. Variables, functions, data structures, OOP, and error handling.',
                     topics: [
-                        { id: 'internet', title: 'How the Internet Works (HTTP, DNS, TCP/IP)', contentRef: 'backend/novice/internet.md' },
-                        { id: 'cli', title: 'The Command Line Interface (CLI)', contentRef: 'backend/novice/cli.md' },
-                        { id: 'programming', title: 'Introduction to Programming (Flow control, Variables)', contentRef: 'backend/novice/programming.md' },
+                        { id: 'variables_types', title: 'Variables, Data Types & Operators', contentRef: 'backend/phase1/variables_types.md', langSpecific: true },
+                        { id: 'control_flow', title: 'Control Flow — Conditions & Loops', contentRef: 'backend/phase1/control_flow.md', langSpecific: true },
+                        { id: 'functions', title: 'Functions, Scope & Closures', contentRef: 'backend/phase1/functions.md', langSpecific: true },
+                        { id: 'data_structures', title: 'Data Structures — Arrays, Objects & Maps', contentRef: 'backend/phase1/data_structures.md', langSpecific: true },
+                        { id: 'oop', title: 'Object-Oriented Programming (Classes & Inheritance)', contentRef: 'backend/phase1/oop.md', langSpecific: true },
+                        { id: 'error_handling', title: 'Error Handling & Debugging', contentRef: 'backend/phase1/error_handling.md', langSpecific: true },
+                        { id: 'modules_packages', title: 'Modules, Packages & Dependency Management', contentRef: 'backend/phase1/modules_packages.md', langSpecific: true },
                     ]
                 },
                 {
-                    id: 'beginner',
-                    title: 'Beginner (Building the First Application)',
-                    description: 'Creating your first web servers and connecting to databases.',
+                    id: 'phase2',
+                    title: 'Phase 2 — Developer Tools & Workflow',
+                    description: 'The tools every professional developer uses daily — terminal, Git, and code organisation.',
                     topics: [
-                        { id: 'servers', title: 'Introduction to Web Servers (Express, FastAPI)', contentRef: 'backend/beginner/servers.md' },
-                        { id: 'rest_apis', title: 'APIs and RESTful Principles', contentRef: 'backend/beginner/rest_apis.md' },
-                        { id: 'sql', title: 'Relational Databases (PostgreSQL) and Basic SQL', contentRef: 'backend/beginner/sql.md' },
-                        { id: 'git', title: 'Version Control (Git & GitHub)', contentRef: 'backend/beginner/git.md' }
+                        { id: 'terminal', title: 'Terminal & Bash — Navigating the Command Line', contentRef: 'backend/phase2/terminal.md' },
+                        { id: 'git_basics', title: 'Git Basics — Commits, Branches & Merging', contentRef: 'backend/phase2/git_basics.md' },
+                        { id: 'github_collab', title: 'GitHub — Pull Requests, Forks & Team Collaboration', contentRef: 'backend/phase2/github_collab.md' },
+                        { id: 'env_setup', title: 'Setting Up a Professional Dev Environment', contentRef: 'backend/phase2/env_setup.md', langSpecific: true },
                     ]
                 },
                 {
-                    id: 'intermediate',
-                    title: 'Intermediate (Production Ready)',
-                    description: 'Securing, testing, and deploying robust applications.',
+                    id: 'phase3',
+                    title: 'Phase 3 — Networking & The Web',
+                    description: 'Understand the plumbing your app runs on — DNS, HTTP, and how data travels across the internet.',
                     topics: [
-                        { id: 'auth', title: 'Authentication & Authorization (JWT, OAuth)', contentRef: 'backend/intermediate/auth.md' },
-                        { id: 'orms', title: 'Object-Relational Mapping (ORMs)', contentRef: 'backend/intermediate/orms.md' },
-                        { id: 'docker', title: 'Containerization (Docker)', contentRef: 'backend/intermediate/docker.md' },
-                        { id: 'cicd', title: 'Continuous Integration & Deployment (CI/CD)', contentRef: 'backend/intermediate/cicd.md' }
+                        { id: 'internet', title: 'How the Internet Works (DNS, TCP/IP, Packets)', contentRef: 'backend/phase3/internet.md' },
+                        { id: 'http_deep', title: 'HTTP In Depth — Methods, Headers, Status Codes', contentRef: 'backend/phase3/http_deep.md' },
+                        { id: 'rest_principles', title: 'REST Architecture — Designing Good APIs', contentRef: 'backend/phase3/rest_principles.md' },
+                        { id: 'json_formats', title: 'Data Formats — JSON, XML, and Serialisation', contentRef: 'backend/phase3/json_formats.md' },
                     ]
                 },
                 {
-                    id: 'advanced',
-                    title: 'Advanced (Scaling Up)',
-                    description: 'Architecting for scale and performance.',
+                    id: 'phase4',
+                    title: 'Phase 4 — Building Web Servers',
+                    description: 'Build your first production-ready backend APIs using your chosen language and framework.',
                     topics: [
-                        { id: 'microservices', title: 'Microservices Architecture vs Monoliths', contentRef: 'backend/advanced/microservices.md' },
-                        { id: 'message_queues', title: 'Message Queues (RabbitMQ/Kafka)', contentRef: 'backend/advanced/message_queues.md' },
-                        { id: 'graphql', title: 'GraphQL & WebSockets for Real-time', contentRef: 'backend/advanced/graphql.md' }
+                        { id: 'web_framework', title: 'Your First Web Server with a Framework', contentRef: 'backend/phase4/web_framework.md', langSpecific: true },
+                        { id: 'routing', title: 'Routing — URL Design and Path Parameters', contentRef: 'backend/phase4/routing.md', langSpecific: true },
+                        { id: 'middleware', title: 'Middleware — Logging, CORS, and Request Pipeline', contentRef: 'backend/phase4/middleware.md', langSpecific: true },
+                        { id: 'validation', title: 'Input Validation — Never Trust User Input', contentRef: 'backend/phase4/validation.md', langSpecific: true },
+                        { id: 'error_api', title: 'Error Handling in APIs — Consistent Responses', contentRef: 'backend/phase4/error_api.md', langSpecific: true },
+                        { id: 'env_vars', title: 'Environment Variables & Config Management', contentRef: 'backend/phase4/env_vars.md' },
+                        { id: 'testing_basics', title: 'Testing Basics — Unit & Integration Tests', contentRef: 'backend/phase4/testing_basics.md', langSpecific: true },
                     ]
                 },
                 {
-                    id: 'expert',
-                    title: 'Expert (Architectural Mastery)',
-                    description: 'Designing highly available systems and cloud-native patterns.',
+                    id: 'phase5',
+                    title: 'Phase 5 — Databases',
+                    description: 'Store, retrieve, and model data using both relational and non-relational databases.',
                     topics: [
-                        { id: 'system_design', title: 'System Design for High Availability and Scalability', contentRef: 'backend/expert/system_design.md' },
-                        { id: 'k8s', title: 'Container Orchestration (Kubernetes)', contentRef: 'backend/expert/k8s.md' },
-                        { id: 'distributed', title: 'Distributed Systems Protocols (Consensus, Vector Clocks)', contentRef: 'backend/expert/distributed.md' }
+                        { id: 'sql_deep', title: 'SQL — DDL, DML, and Querying Postgres', contentRef: 'backend/phase5/sql_deep.md' },
+                        { id: 'db_design', title: 'Database Design & Normalisation (1NF–3NF)', contentRef: 'backend/phase5/db_design.md' },
+                        { id: 'joins_advanced', title: 'Advanced SQL — JOINs, Subqueries & Aggregations', contentRef: 'backend/phase5/joins_advanced.md' },
+                        { id: 'orm', title: 'Object-Relational Mapping (ORM) & Migrations', contentRef: 'backend/phase5/orm.md', langSpecific: true },
+                        { id: 'indexing', title: 'Indexing, Query Planning & Performance', contentRef: 'backend/phase5/indexing.md' },
+                        { id: 'nosql', title: 'NoSQL Databases — MongoDB & When to Use Them', contentRef: 'backend/phase5/nosql.md' },
+                        { id: 'transactions', title: 'Transactions, ACID, and Concurrency', contentRef: 'backend/phase5/transactions.md' },
                     ]
-                }
+                },
+                {
+                    id: 'phase6',
+                    title: 'Phase 6 — Authentication & Security',
+                    description: 'Protect your application — user login, sessions, JWT tokens, and defending against attacks.',
+                    topics: [
+                        { id: 'passwords', title: 'Password Hashing with bcrypt', contentRef: 'backend/phase6/passwords.md', langSpecific: true },
+                        { id: 'sessions_cookies', title: 'Sessions & Cookies — Stateful Auth', contentRef: 'backend/phase6/sessions_cookies.md', langSpecific: true },
+                        { id: 'jwt', title: 'JWT — Stateless Authentication', contentRef: 'backend/phase6/jwt.md', langSpecific: true },
+                        { id: 'oauth', title: 'OAuth 2.0 — Login with Google / GitHub', contentRef: 'backend/phase6/oauth.md' },
+                        { id: 'rbac', title: 'Role-Based Access Control (RBAC)', contentRef: 'backend/phase6/rbac.md', langSpecific: true },
+                        { id: 'security_threats', title: 'Security — SQL Injection, XSS, CSRF & Rate Limiting', contentRef: 'backend/phase6/security_threats.md' },
+                        { id: 'https_cors', title: 'HTTPS, TLS & CORS Configuration', contentRef: 'backend/phase6/https_cors.md' },
+                    ]
+                },
+                {
+                    id: 'phase7',
+                    title: 'Phase 7 — Advanced API Features',
+                    description: 'Add real-world capabilities — file uploads, emails, real-time, search, and API design patterns.',
+                    topics: [
+                        { id: 'file_uploads', title: 'File Uploads — Images, PDFs & Cloud Storage', contentRef: 'backend/phase7/file_uploads.md', langSpecific: true },
+                        { id: 'email', title: 'Sending Email — Transactional & Notifications', contentRef: 'backend/phase7/email.md', langSpecific: true },
+                        { id: 'pagination', title: 'Pagination, Filtering & Sorting APIs', contentRef: 'backend/phase7/pagination.md' },
+                        { id: 'websockets', title: 'Real-Time with WebSockets', contentRef: 'backend/phase7/websockets.md', langSpecific: true },
+                        { id: 'graphql', title: 'GraphQL — Flexible API Queries', contentRef: 'backend/phase7/graphql.md', langSpecific: true },
+                        { id: 'caching', title: 'Caching with Redis — Speed Up Your API', contentRef: 'backend/phase7/caching.md' },
+                        { id: 'api_versioning', title: 'API Versioning & Deprecation Strategies', contentRef: 'backend/phase7/api_versioning.md' },
+                    ]
+                },
+                {
+                    id: 'phase8',
+                    title: 'Phase 8 — Infrastructure & Deployment',
+                    description: 'Ship your application to the world — containers, CI/CD pipelines, and cloud deployment.',
+                    topics: [
+                        { id: 'docker', title: 'Docker — Containers & docker-compose', contentRef: 'backend/phase8/docker.md', langSpecific: true },
+                        { id: 'cicd', title: 'CI/CD — GitHub Actions Pipelines', contentRef: 'backend/phase8/cicd.md' },
+                        { id: 'cloud_deploy', title: 'Cloud Deployment — Railway, Render & AWS EC2', contentRef: 'backend/phase8/cloud_deploy.md', langSpecific: true },
+                        { id: 'logging', title: 'Logging, Monitoring & Alerting', contentRef: 'backend/phase8/logging.md' },
+                        { id: 'secrets', title: 'Secrets Management & Production Config', contentRef: 'backend/phase8/secrets.md' },
+                    ]
+                },
+                {
+                    id: 'phase9',
+                    title: 'Phase 9 — System Design & Scalability',
+                    description: 'Design systems that handle millions of users — the knowledge that separates seniors from juniors.',
+                    topics: [
+                        { id: 'cap_theorem', title: 'CAP Theorem & Distributed Systems Basics', contentRef: 'backend/phase9/cap_theorem.md' },
+                        { id: 'message_queues', title: 'Message Queues — Kafka & RabbitMQ', contentRef: 'backend/phase9/message_queues.md' },
+                        { id: 'microservices', title: 'Microservices vs Monolith — When & Why', contentRef: 'backend/phase9/microservices.md' },
+                        { id: 'load_balancing', title: 'Load Balancing & Horizontal Scaling', contentRef: 'backend/phase9/load_balancing.md' },
+                        { id: 'db_scaling', title: 'Database Scaling — Replication & Sharding', contentRef: 'backend/phase9/db_scaling.md' },
+                        { id: 'system_design_interview', title: 'System Design Interview Walkthroughs', contentRef: 'backend/phase9/system_design_interview.md' },
+                    ]
+                },
             ]
         },
         {

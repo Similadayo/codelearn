@@ -909,6 +909,843 @@ Build a semantic, accessible webpage for a blog post about "Climate Change":
 Validate your HTML at [validator.w3.org](https://validator.w3.org) and correct all errors before submitting.
 `,
 
+  // ─── LANGUAGE-SPECIFIC: variables_types ──────────────────────────────────
+
+  variables_types_nodejs: `
+# Variables, Data Types & Operators — JavaScript / Node.js
+
+JavaScript is a **dynamically typed** language. Unlike Java or C, you don't declare what *type* a variable is — the runtime figures it out. This is both a strength (fast to write) and a risk (easy to create bugs). Understanding types deeply will save you from hours of debugging.
+
+---
+
+## 1. Declaring Variables
+
+JavaScript has three ways to declare variables — and you should almost always use \`const\` or \`let\`:
+
+\`\`\`javascript
+// const — value cannot be reassigned (use this by default)
+const apiPort = 3000;
+const appName = 'CodeLearn';
+
+// let — value CAN be reassigned (use only when you need to change it)
+let retryCount = 0;
+retryCount = retryCount + 1; // This is fine
+
+// var — AVOID this. It has confusing "function scope" and hoisting behavior.
+var oldWay = 'please do not use me';
+\`\`\`
+
+**Rule of thumb:** Start with \`const\`. If you find you need to reassign, switch to \`let\`. Never use \`var\`.
+
+---
+
+## 2. Primitive Data Types
+
+JavaScript has 7 primitive types:
+
+\`\`\`javascript
+// 1. Number — ALL numbers (integers and floats are the same type)
+const age = 25;
+const price = 19.99;
+const big = 9007199254740991; // MAX_SAFE_INTEGER
+
+// 2. String — text (use template literals for interpolation)
+const name = 'Alice';
+const greeting = \`Hello, ${name}! You are ${age} years old.\`; // Template literal
+
+// 3. Boolean
+const isLoggedIn = true;
+const hasPermission = false;
+
+// 4. undefined — declared but not assigned
+let uninitialised;
+console.log(uninitialised); // undefined
+
+// 5. null — intentionally empty (you set this on purpose)
+const user = null; // "there is no user"
+
+// 6. BigInt — very large integers
+const bigNumber = 9007199254740992n; // Note the 'n' suffix
+
+// 7. Symbol — unique identifiers (rare, mostly used in libraries)
+const id = Symbol('uniqueId');
+\`\`\`
+
+---
+
+## 3. Type Coercion — JavaScript's Famous Gotcha
+
+JavaScript *automatically converts* types in unexpected ways. This is called **type coercion**:
+
+\`\`\`javascript
+// Adding string + number = string concatenation (NOT math!)
+console.log('5' + 3);   // "53"  ← string!
+console.log('5' - 3);   // 2     ← number! (subtraction converts)
+
+// Equality: == vs ===
+console.log(0 == false);   // true  ← loose equality, coerces types
+console.log(0 === false);  // false ← strict equality, no coercion
+
+// ALWAYS use === and !==. Never use == or !=
+\`\`\`
+
+**Golden rule:** Always use \`===\` (triple equals). Teach yourself never to write \`==\`.
+
+---
+
+## 4. Checking Types
+
+\`\`\`javascript
+typeof 42           // "number"
+typeof 'hello'      // "string"
+typeof true         // "boolean"
+typeof undefined    // "undefined"
+typeof null         // "object" ← famous JavaScript bug! (null is NOT an object)
+typeof []           // "object" ← arrays are objects too
+typeof {}           // "object"
+
+// Better check for null:
+const value = null;
+if (value === null) console.log('it is null');
+
+// Better check for arrays:
+Array.isArray([1, 2, 3]); // true
+\`\`\`
+
+---
+
+## 5. Objects — The Core of JavaScript
+
+In JavaScript, almost everything is an object. Objects are collections of key-value pairs:
+
+\`\`\`javascript
+const user = {
+  id: 1,
+  name: 'Alice',
+  email: 'alice@example.com',
+  isAdmin: false,
+  address: {                // Nested object
+    city: 'Lagos',
+    country: 'Nigeria'
+  }
+};
+
+// Accessing properties
+console.log(user.name);           // "Alice" — dot notation
+console.log(user['email']);       // "alice@example.com" — bracket notation
+
+// Destructuring — extract properties cleanly
+const { name, email } = user;
+console.log(name);  // "Alice"
+
+// Spread — copy or merge objects
+const updatedUser = { ...user, isAdmin: true }; // Changed isAdmin but kept rest
+\`\`\`
+
+---
+
+## 6. Arithmetic & Comparison Operators
+
+\`\`\`javascript
+// Arithmetic
+10 + 3   // 13
+10 - 3   // 7
+10 * 3   // 30
+10 / 3   // 3.333...
+10 % 3   // 1 (remainder/modulo — very useful!)
+10 ** 3  // 1000 (exponentiation)
+
+// Comparison (always use ===)
+5 === 5    // true
+5 !== 3    // true
+5 > 3      // true
+5 >= 5     // true
+
+// Logical operators
+true && false  // false (AND)
+true || false  // true  (OR)
+!true          // false (NOT)
+
+// Nullish coalescing — use a fallback if value is null or undefined
+const port = process.env.PORT ?? 3000;   // If PORT is not set, use 3000
+const displayName = user.name ?? 'Anonymous'; // If name is null/undefined
+\`\`\`
+
+---
+
+## 7. Exercise
+
+Write a Node.js script (\`types.js\`) that:
+
+1. Declares a \`product\` object with: \`id\` (number), \`name\` (string), \`price\` (number), \`inStock\` (boolean), \`tags\` (array of strings)
+2. Uses destructuring to extract \`name\` and \`price\` from the product
+3. Uses a template literal to log: \`"Product: [name] costs $[price]"\`
+4. Creates a \`discountedProduct\` using spread syntax that has all the same fields but \`price\` reduced by 20%
+5. Demonstrates the \`===\` vs \`==\` difference by comparing \`0 == false\` and \`0 === false\` and logging both results with explanatory messages
+6. Uses the nullish coalescing operator to assign a default category of \`'Uncategorised'\` to a product that has no \`category\` property
+
+Run it with \`node types.js\` and submit the script plus its console output.
+`,
+
+  variables_types_python: `
+# Variables, Data Types & Operators — Python
+
+Python is built around the philosophy of **readability** — code should read like natural English. It's dynamically typed (like JavaScript) but with a much cleaner syntax and a few key distinctions that make it beginner-friendly and incredibly powerful.
+
+---
+
+## 1. Variables — No Declaration Keywords Needed
+
+In Python, you simply assign and go. No \`const\`, \`let\`, or \`var\`:
+
+\`\`\`python
+# Just assign directly
+api_port = 3000
+app_name = "CodeLearn"
+is_running = True
+
+# Reassignment is always allowed (Python doesn't have const)
+counter = 0
+counter = counter + 1
+counter += 1  # Shorthand
+
+# Python convention: use snake_case for variables (not camelCase)
+user_first_name = "Alice"  # ✅ Pythonic
+userFirstName = "Alice"    # ❌ Not Pythonic
+\`\`\`
+
+Python does NOT have a built-in constant mechanism, but by convention you write constants in ALL_CAPS to signal "don't change this":
+
+\`\`\`python
+MAX_RETRIES = 3
+DATABASE_URL = "postgres://localhost:5432/mydb"
+\`\`\`
+
+---
+
+## 2. Core Data Types
+
+\`\`\`python
+# int — whole numbers (no size limit in Python!)
+age = 25
+big_number = 999_999_999_999  # Underscores for readability
+
+# float — decimal numbers
+price = 19.99
+pi = 3.14159
+
+# str — strings (single or double quotes, both are fine)
+name = 'Alice'
+greeting = "Hello!"
+multi_line = """
+This is a
+multi-line string.
+"""
+
+# f-strings — the modern way to format strings (Python 3.6+)
+name = "Alice"
+age = 25
+message = f"Hello, {name}! You are {age} years old."
+print(message)  # Hello, Alice! You are 25 years old.
+
+# bool — True or False (note: capital T and F)
+is_logged_in = True
+has_permission = False
+
+# None — equivalent to null in other languages
+user = None  # "there is no user"
+\`\`\`
+
+---
+
+## 3. Checking Types
+
+\`\`\`python
+type(42)        # <class 'int'>
+type(3.14)      # <class 'float'>
+type("hello")   # <class 'str'>
+type(True)      # <class 'bool'>
+type(None)      # <class 'NoneType'>
+
+# isinstance() — the better way to check types
+isinstance(42, int)       # True
+isinstance("hello", str)  # True
+isinstance(True, bool)    # True
+isinstance(True, int)     # True! (bool is a subclass of int in Python)
+\`\`\`
+
+---
+
+## 4. Lists, Tuples & Dictionaries
+
+\`\`\`python
+# list — ordered, mutable (can change) — like arrays
+fruits = ["apple", "banana", "cherry"]
+fruits.append("mango")        # Add to end
+fruits[0]                     # "apple" — index starts at 0
+fruits[-1]                    # "mango" — negative index counts from end
+fruits[1:3]                   # ["banana", "cherry"] — slicing
+
+# tuple — ordered, IMMUTABLE (cannot change)
+coordinates = (40.7128, -74.0060)  # Latitude, longitude
+x, y = coordinates                 # Unpacking a tuple
+
+# dict — key-value pairs (like objects in JavaScript)
+user = {
+    "id": 1,
+    "name": "Alice",
+    "email": "alice@example.com",
+    "is_admin": False
+}
+
+# Accessing dict values
+print(user["name"])           # "Alice" — will raise KeyError if missing
+print(user.get("phone"))      # None — safe access, returns None if missing
+print(user.get("phone", "N/A"))  # "N/A" — with default value
+
+# Updating dicts
+user["is_admin"] = True           # Update existing key
+user["created_at"] = "2024-01-01" # Add new key
+
+# Destructuring a dict in Python
+name = user["name"]
+email = user["email"]
+\`\`\`
+
+---
+
+## 5. Operators
+
+\`\`\`python
+# Arithmetic
+10 + 3   # 13
+10 - 3   # 7
+10 * 3   # 30
+10 / 3   # 3.333... (always returns float!)
+10 // 3  # 3 (floor division — integer result)
+10 % 3   # 1 (modulo — remainder)
+10 ** 3  # 1000 (exponentiation)
+
+# Comparison — Python's == works as expected (no coercion weirdness!)
+5 == 5    # True
+5 != 3    # True
+5 > 3     # True
+5 >= 5    # True
+
+# Logical operators (Python uses words, not symbols)
+True and False   # False
+True or False    # True
+not True         # False
+
+# Identity operators
+x = None
+if x is None:       # ✅ Preferred way to check for None
+    print("No value")
+if x == None:       # ❌ Works but not idiomatic
+    print("No value")
+\`\`\`
+
+---
+
+## 6. Python vs JavaScript Key Differences
+
+| Feature | Python | JavaScript |
+|---------|--------|------------|
+| Null | \`None\` | \`null\` / \`undefined\` |
+| Arrays | \`list\` | \`Array\` |
+| Objects | \`dict\` | \`Object\` |
+| Booleans | \`True\` / \`False\` | \`true\` / \`false\` |
+| String format | f-strings: \`f"Hi {name}"\` | Template literals: \`\\\`Hi ${name}\\\`\` |
+| Division | \`10 / 3 = 3.333\` | \`10 / 3 = 3.333\` |
+| Integer divide | \`10 // 3 = 3\` | \`Math.floor(10/3) = 3\` |
+| Type check | \`isinstance(x, int)\` | \`typeof x === 'number'\` |
+
+---
+
+## 7. Exercise
+
+Create a Python script \`types.py\` that:
+
+1. Creates a \`product\` dictionary with: \`id\` (int), \`name\` (str), \`price\` (float), \`in_stock\` (bool), \`tags\` (list of strings)
+2. Uses an f-string to print: \`"Product: [name] costs $[price]"\`
+3. Creates a \`discounted_price\` variable that reduces the price by 20% using arithmetic operators
+4. Updates the product dictionary with the discounted price
+5. Checks if the price after discount is greater than 10 and prints an appropriate message using a comparison operator
+6. Accesses a \`category\` key safely using \`.get()\` with a default value of \`'Uncategorised'\`
+
+Run with \`python3 types.py\` and submit the script plus output.
+`,
+
+  // ─── LANGUAGE-SPECIFIC: web_framework ─────────────────────────────────────
+
+  web_framework_nodejs: `
+# Building Your First Web Server — Node.js & Express
+
+Express.js is by far the most popular Node.js web framework. It's minimal, unopinionated, and powers a huge portion of the Node.js backend ecosystem. Companies like Uber, IBM, and Twitter use it. Learning Express is learning the backbone of Node.js development.
+
+---
+
+## 1. What is Express?
+
+Express is a thin layer on top of Node's built-in \`http\` module. It adds:
+- **Routing** — easily handle GET /users, POST /posts, etc.
+- **Middleware** — a pipeline of functions that process requests before your handler
+- **Response helpers** — \`res.json()\`, \`res.status()\`, \`res.sendFile()\`, etc.
+
+Without Express, even basic routing becomes verbose and messy. With it, you can build a REST API in minutes.
+
+---
+
+## 2. Setting Up a Project
+
+\`\`\`bash
+# Create project folder and initialise npm
+mkdir my-api && cd my-api
+npm init -y
+
+# Install Express and dotenv
+npm install express dotenv
+
+# Install nodemon for auto-restart during development
+npm install --save-dev nodemon
+
+# Create main file
+touch server.js .env
+\`\`\`
+
+Add to \`package.json\`:
+
+\`\`\`json
+{
+  "scripts": {
+    "start": "node server.js",
+    "dev": "nodemon server.js"
+  }
+}
+\`\`\`
+
+---
+
+## 3. Your First Express Server
+
+\`\`\`javascript
+// server.js
+require('dotenv').config(); // Load .env file into process.env
+const express = require('express');
+
+const app = express(); // Create the Express application
+
+// MIDDLEWARE — parse incoming JSON request bodies
+app.use(express.json());
+
+// ROUTE — handle GET requests to /
+app.get('/', (req, res) => {
+  res.json({
+    message: 'Welcome to my API!',
+    version: '1.0.0',
+    timestamp: new Date().toISOString(),
+  });
+});
+
+// ROUTE — handle GET requests to /health
+app.get('/health', (req, res) => {
+  res.status(200).json({ status: 'ok' });
+});
+
+// Start the server
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+  console.log(\`🚀 Server running at http://localhost:\${PORT}\`);
+});
+\`\`\`
+
+Run it: \`npm run dev\`
+
+Test it: \`curl http://localhost:3000\` or open in your browser.
+
+---
+
+## 4. Building a Full CRUD API
+
+\`\`\`javascript
+// In-memory data store (we'll replace with a database in Phase 5)
+let books = [
+  { id: 1, title: 'Clean Code', author: 'Robert Martin', year: 2008 },
+  { id: 2, title: 'The Pragmatic Programmer', author: 'David Thomas', year: 1999 },
+];
+let nextId = 3;
+
+// GET /books — list all books
+app.get('/books', (req, res) => {
+  res.json(books);
+});
+
+// GET /books/:id — get a specific book
+app.get('/books/:id', (req, res) => {
+  const id = parseInt(req.params.id); // req.params contains URL path params
+  const book = books.find(b => b.id === id);
+
+  if (!book) {
+    return res.status(404).json({ error: 'Book not found' });
+  }
+
+  res.json(book);
+});
+
+// POST /books — create a new book
+app.post('/books', (req, res) => {
+  const { title, author, year } = req.body; // req.body contains the parsed JSON body
+
+  // Validate inputs
+  if (!title || !author) {
+    return res.status(400).json({ error: 'title and author are required' });
+  }
+
+  const newBook = { id: nextId++, title, author, year: year || new Date().getFullYear() };
+  books.push(newBook);
+
+  res.status(201).json(newBook); // 201 = Created
+});
+
+// PATCH /books/:id — update a book
+app.patch('/books/:id', (req, res) => {
+  const id = parseInt(req.params.id);
+  const bookIndex = books.findIndex(b => b.id === id);
+
+  if (bookIndex === -1) {
+    return res.status(404).json({ error: 'Book not found' });
+  }
+
+  // Merge existing book with updates (only update provided fields)
+  books[bookIndex] = { ...books[bookIndex], ...req.body };
+
+  res.json(books[bookIndex]);
+});
+
+// DELETE /books/:id — delete a book
+app.delete('/books/:id', (req, res) => {
+  const id = parseInt(req.params.id);
+  const bookIndex = books.findIndex(b => b.id === id);
+
+  if (bookIndex === -1) {
+    return res.status(404).json({ error: 'Book not found' });
+  }
+
+  books.splice(bookIndex, 1);
+  res.status(204).send(); // 204 = No Content (success, nothing to return)
+});
+\`\`\`
+
+---
+
+## 5. Request & Response Objects
+
+\`\`\`javascript
+app.post('/example', (req, res) => {
+  // REQUEST object — what comes IN
+  req.body;            // Parsed JSON body (requires express.json() middleware)
+  req.params;          // URL path parameters (:id, :slug)
+  req.query;           // URL query string (?page=1&limit=10)
+  req.headers;         // HTTP headers (Authorization, Content-Type, etc.)
+  req.method;          // "POST", "GET", etc.
+  req.path;            // "/example"
+
+  // RESPONSE object — what you send BACK
+  res.status(201);          // Set the HTTP status code
+  res.json({ key: 'val' }); // Send JSON response
+  res.send('text');         // Send plain text response
+  res.redirect('/other');   // Redirect to another URL
+  res.setHeader('X-Custom', 'value'); // Set a response header
+});
+\`\`\`
+
+---
+
+## 6. Error Handling Middleware
+
+Express has a special 4-argument middleware for catching errors:
+
+\`\`\`javascript
+// Custom error class
+class AppError extends Error {
+  constructor(message, statusCode) {
+    super(message);
+    this.statusCode = statusCode;
+  }
+}
+
+// All your routes...
+app.get('/protected', (req, res, next) => {
+  if (!req.headers.authorization) {
+    return next(new AppError('Not authenticated', 401)); // Pass to error handler
+  }
+  res.json({ secret: 'data' });
+});
+
+// Global error handler — must have 4 params (err, req, res, next)
+app.use((err, req, res, next) => {
+  const statusCode = err.statusCode || 500;
+  const message = err.message || 'Something went wrong';
+
+  console.error(\`[ERROR] \${req.method} \${req.path}: \${message}\`);
+
+  res.status(statusCode).json({
+    error: message,
+    ...(process.env.NODE_ENV === 'development' && { stack: err.stack }),
+  });
+});
+\`\`\`
+
+---
+
+## 7. Exercise
+
+Build a complete Express REST API for a **task manager**:
+
+**Endpoints required:**
+- \`GET /tasks\` — return all tasks, support \`?completed=true\` query param to filter
+- \`GET /tasks/:id\` — return a specific task (404 if not found)
+- \`POST /tasks\` — create task with \`title\` (required), \`description\` (optional), \`completed: false\` by default
+- \`PATCH /tasks/:id/complete\` — mark a task as completed
+- \`DELETE /tasks/:id\` — delete a task
+
+**Requirements:**
+- Validate that \`title\` is present when creating (return 400 if missing)
+- All 404s must return \`{ error: "Task not found" }\`
+- Include a global error handler middleware
+- Use \`nodemon\` for development, \`dotenv\` for the port config
+
+Submit your \`server.js\` and \`package.json\`.
+`,
+
+  web_framework_python: `
+# Building Your First Web Server — Python & FastAPI
+
+FastAPI is the most modern Python web framework. It's extraordinarily fast (on par with Node.js), gives you automatic API documentation for free, enforces type hints, and is used at Microsoft, Uber, and Netflix. If you're starting a new Python backend today, FastAPI is the right choice.
+
+---
+
+## 1. What is FastAPI?
+
+FastAPI is built on top of **Starlette** (the async web framework) and **Pydantic** (for data validation). It adds:
+- **Automatic data validation** with Python type hints
+- **Auto-generated OpenAPI docs** at \`/docs\` — zero configuration
+- **Async support** — handle thousands of requests without threads
+- **Dependency injection** built-in — clean, testable code
+
+---
+
+## 2. Setting Up a Project
+
+\`\`\`bash
+# Create a virtual environment (always use one!)
+python3 -m venv venv
+source venv/bin/activate   # On Windows: venv\\Scripts\\activate
+
+# Install FastAPI and uvicorn (the ASGI server)
+pip install fastapi uvicorn[standard] python-dotenv
+
+# Create your files
+touch main.py .env
+\`\`\`
+
+---
+
+## 3. Your First FastAPI Server
+
+\`\`\`python
+# main.py
+from fastapi import FastAPI
+import uvicorn
+from datetime import datetime
+
+app = FastAPI(
+    title="My API",
+    description="A FastAPI backend server",
+    version="1.0.0"
+)
+
+@app.get("/")
+def root():
+    """Welcome endpoint."""
+    return {
+        "message": "Welcome to my API!",
+        "version": "1.0.0",
+        "timestamp": datetime.now().isoformat()
+    }
+
+@app.get("/health")
+def health_check():
+    return {"status": "ok"}
+
+if __name__ == "__main__":
+    uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True)
+\`\`\`
+
+Run: \`python main.py\` or \`uvicorn main:app --reload\`
+
+Visit: \`http://localhost:8000\` for the API, \`http://localhost:8000/docs\` for interactive documentation!
+
+---
+
+## 4. Pydantic Models — Type-Safe Request Bodies
+
+This is FastAPI's killer feature — define your data shapes and get automatic validation for free:
+
+\`\`\`python
+from fastapi import FastAPI, HTTPException
+from pydantic import BaseModel, EmailStr, Field
+from typing import Optional
+from datetime import datetime
+
+app = FastAPI()
+
+# Define what a Book looks like
+class BookCreate(BaseModel):
+    title: str = Field(..., min_length=1, max_length=200)  # Required
+    author: str = Field(..., min_length=1)                 # Required
+    year: Optional[int] = Field(None, ge=1000, le=2100)   # Optional, with range
+    isbn: Optional[str] = None
+
+class Book(BookCreate):
+    id: int
+    created_at: datetime
+
+# In-memory store
+books: list[Book] = [
+    Book(id=1, title="Clean Code", author="Robert Martin", year=2008, created_at=datetime.now()),
+]
+next_id = 2
+
+# GET /books — list all
+@app.get("/books", response_model=list[Book])
+def list_books():
+    return books
+
+# GET /books/{book_id} — get one
+@app.get("/books/{book_id}", response_model=Book)
+def get_book(book_id: int):
+    book = next((b for b in books if b.id == book_id), None)
+    if not book:
+        raise HTTPException(status_code=404, detail="Book not found")
+    return book
+
+# POST /books — create
+@app.post("/books", response_model=Book, status_code=201)
+def create_book(data: BookCreate):
+    global next_id
+    new_book = Book(
+        id=next_id,
+        created_at=datetime.now(),
+        **data.model_dump()
+    )
+    books.append(new_book)
+    next_id += 1
+    return new_book
+
+# PATCH /books/{book_id} — partial update
+@app.patch("/books/{book_id}", response_model=Book)
+def update_book(book_id: int, updates: dict):
+    for i, book in enumerate(books):
+        if book.id == book_id:
+            updated = book.model_copy(update=updates)
+            books[i] = updated
+            return updated
+    raise HTTPException(status_code=404, detail="Book not found")
+
+# DELETE /books/{book_id} — delete
+@app.delete("/books/{book_id}", status_code=204)
+def delete_book(book_id: int):
+    global books
+    book = next((b for b in books if b.id == book_id), None)
+    if not book:
+        raise HTTPException(status_code=404, detail="Book not found")
+    books = [b for b in books if b.id != book_id]
+\`\`\`
+
+---
+
+## 5. Path Parameters & Query Parameters
+
+\`\`\`python
+from fastapi import Query
+
+# Path parameter — /users/42
+@app.get("/users/{user_id}")
+def get_user(user_id: int):   # FastAPI auto-converts to int and validates
+    return {"user_id": user_id}
+
+# Query parameters — /books?page=1&limit=10&author=Martin
+@app.get("/books/search")
+def search_books(
+    page: int = Query(default=1, ge=1),           # Default: 1, minimum: 1
+    limit: int = Query(default=10, ge=1, le=100), # Range: 1-100
+    author: Optional[str] = Query(default=None),
+):
+    results = books
+    if author:
+        results = [b for b in results if author.lower() in b.author.lower()]
+
+    start = (page - 1) * limit
+    end = start + limit
+    return {
+        "total": len(results),
+        "page": page,
+        "data": results[start:end]
+    }
+\`\`\`
+
+---
+
+## 6. Error Handling
+
+\`\`\`python
+from fastapi import Request
+from fastapi.responses import JSONResponse
+
+# Custom exception class
+class AppException(Exception):
+    def __init__(self, status_code: int, detail: str):
+        self.status_code = status_code
+        self.detail = detail
+
+# Register a global exception handler
+@app.exception_handler(AppException)
+async def app_exception_handler(request: Request, exc: AppException):
+    return JSONResponse(
+        status_code=exc.status_code,
+        content={"error": exc.detail}
+    )
+
+# Use it in your routes
+@app.get("/protected")
+def protected_route(token: Optional[str] = None):
+    if not token:
+        raise AppException(status_code=401, detail="Not authenticated")
+    return {"data": "secret"}
+\`\`\`
+
+---
+
+## 7. Exercise
+
+Build a complete FastAPI REST API for a **task manager**:
+
+**Endpoints required:**
+- \`GET /tasks\` — return all tasks, support \`?completed=bool\` query to filter
+- \`GET /tasks/{task_id}\` — return specific task (404 if not found)
+- \`POST /tasks\` — create task with \`title\` (required), \`description\` (optional)
+- \`PATCH /tasks/{task_id}/complete\` — mark as completed
+- \`DELETE /tasks/{task_id}\` — delete (204 No Content)
+
+**Requirements:**
+- Create a \`TaskCreate\` and \`Task\` Pydantic model with proper field validation
+- Use \`HTTPException\` for all 404 and 400 errors
+- Visit \`/docs\` after running to verify your API is fully documented automatically
+
+Submit your \`main.py\` and describe one thing you liked about FastAPI compared to what you expected.
+`,
+
   // FALLBACK for content not yet written
   _fallback: `
 # {title}
@@ -924,19 +1761,25 @@ Come back soon for the full in-depth guide with code examples and exercises!
 `
 };
 
-export function getMockContent(trackId: string, moduleId: string, topicId: string): string {
-  // Look up content by topic ID directly
+export function getMockContent(trackId: string, moduleId: string, topicId: string, lang?: string): string {
+  // 1. Try language-specific key first: e.g. 'web_framework_nodejs'
+  if (lang) {
+    const langKey = topicId + '_' + lang;
+    if (contentRegistry[langKey]) return contentRegistry[langKey];
+  }
+
+  // 2. Try exact topic ID match
   if (contentRegistry[topicId]) {
     return contentRegistry[topicId];
   }
 
-  // Try track_topicId combination
+  // 3. Try track_topicId combination
   const trackTopicKey = trackId + '_' + topicId;
   if (contentRegistry[trackTopicKey]) {
     return contentRegistry[trackTopicKey];
   }
 
-  // Fallback for topics without dedicated content yet
+  // 4. Fallback — clean up the topic ID to a readable title
   const title = topicId
     .split('_')
     .map(w => w.charAt(0).toUpperCase() + w.slice(1))
