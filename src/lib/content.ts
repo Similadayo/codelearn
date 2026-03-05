@@ -951,7 +951,7 @@ const big = 9007199254740991; // MAX_SAFE_INTEGER
 
 // 2. String — text (use template literals for interpolation)
 const name = 'Alice';
-const greeting = \`Hello, ${name}! You are ${age} years old.\`; // Template literal
+const greeting = \`Hello, \${name}! You are \${age} years old.\`; // Template literal
 
 // 3. Boolean
 const isLoggedIn = true;
@@ -1145,8 +1145,7 @@ multi-line string.
 # f-strings — the modern way to format strings (Python 3.6+)
 name = "Alice"
 age = 25
-message = f"Hello, {name}! You are {age} years old."
-print(message)  # Hello, Alice! You are 25 years old.
+message = f"Hello, {name}! You are {age} years old.\n"# Python f-string
 
 # bool — True or False (note: capital T and F)
 is_logged_in = True
