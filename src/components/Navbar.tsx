@@ -1,3 +1,4 @@
+'use client';
 import Link from 'next/link';
 import { BookOpen, UserCircle, Code2, LogOut } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';

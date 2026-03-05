@@ -1,3 +1,4 @@
+'use client';
 import Link from 'next/link';
 import { LayoutDashboard, Book, CodeSquare, History, Settings } from 'lucide-react';
 
