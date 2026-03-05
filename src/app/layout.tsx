@@ -1,3 +1,4 @@
+import { ReactNode } from 'react';
 import './globals.css';
 import Navbar from '@/components/Navbar';
 import Sidebar from '@/components/Sidebar';
@@ -9,7 +10,7 @@ export const metadata = {
     description: 'Master every discipline in Tech',
 };
 
-export default function RootLayout({ children }) {
+export default function RootLayout({ children }: { children: ReactNode }) {
     return (
         <html lang="en">
             <body>

@@ -8,7 +8,15 @@ import ReactMarkdown from 'react-markdown';
 import Link from 'next/link';
 import { ArrowLeft, CheckCircle } from 'lucide-react';
 
-export default function TopicPage({ params }) {
+interface TopicPageProps {
+  params: {
+    trackId: string;
+    moduleId: string;
+    topicId: string;
+  }
+}
+
+export default function TopicPage({ params }: TopicPageProps) {
   const { trackId, moduleId, topicId } = params;
   const { user } = useAuth();
   const { progress, markTopicCompleted, submitExercise, submissions } = useAppData();
@@ -44,15 +52,15 @@ export default function TopicPage({ params }) {
           {/* Extremely basic markdown rendering for prototype */}
           <ReactMarkdown
             components={{
-              h1: ({ node, ...props }) => <h1 style={{ fontSize: '2.5rem', marginBottom: '1.5rem', color: 'var(--accent-hover)' }} {...props} />,
-              h2: ({ node, ...props }) => <h2 style={{ fontSize: '1.8rem', marginTop: '2rem', marginBottom: '1rem', borderBottom: '1px solid var(--glass-border)', paddingBottom: '0.5rem' }} {...props} />,
-              h3: ({ node, ...props }) => <h3 style={{ fontSize: '1.4rem', marginTop: '1.5rem', marginBottom: '1rem' }} {...props} />,
-              p: ({ node, ...props }) => <p style={{ marginBottom: '1rem' }} {...props} />,
-              code: ({ node, inline, ...props }) =>
+              h1: ({ node, ...props }: any) => <h1 style={{ fontSize: '2.5rem', marginBottom: '1.5rem', color: 'var(--accent-hover)' }} {...props} />,
+              h2: ({ node, ...props }: any) => <h2 style={{ fontSize: '1.8rem', marginTop: '2rem', marginBottom: '1rem', borderBottom: '1px solid var(--glass-border)', paddingBottom: '0.5rem' }} {...props} />,
+              h3: ({ node, ...props }: any) => <h3 style={{ fontSize: '1.4rem', marginTop: '1.5rem', marginBottom: '1rem' }} {...props} />,
+              p: ({ node, ...props }: any) => <p style={{ marginBottom: '1rem' }} {...props} />,
+              code: ({ node, inline, ...props }: any) =>
                 inline ?
                   <code style={{ background: 'rgba(255,255,255,0.1)', padding: '0.2rem 0.4rem', borderRadius: '4px', color: '#ff79c6' }} {...props} /> :
                   <pre style={{ background: '#282a36', padding: '1.5rem', borderRadius: '8px', overflowX: 'auto', marginBottom: '1.5rem', border: '1px solid var(--glass-border)' }}><code style={{ color: '#f8f8f2' }} {...props} /></pre>,
-              blockquote: ({ node, ...props }) => <blockquote style={{ borderLeft: '4px solid var(--accent-primary)', paddingLeft: '1rem', color: 'var(--text-secondary)', fontStyle: 'italic', background: 'rgba(59, 130, 246, 0.05)', padding: '1rem' }} {...props} />
+              blockquote: ({ node, ...props }: any) => <blockquote style={{ borderLeft: '4px solid var(--accent-primary)', paddingLeft: '1rem', color: 'var(--text-secondary)', fontStyle: 'italic', background: 'rgba(59, 130, 246, 0.05)', padding: '1rem' }} {...props} />
             }}
           >
             {content}

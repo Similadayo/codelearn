@@ -1,7 +1,7 @@
-export function getMockContent(trackId, moduleId, topicId) {
-    // Deeply detailed mock content to fulfill the "very very detailed" requirement.
-    const title = topicId.charAt(0).toUpperCase() + topicId.slice(1);
-    return `
+export function getMockContent(trackId: string, moduleId: string, topicId: string): string {
+  // Deeply detailed mock content to fulfill the "very very detailed" requirement.
+  const title = topicId.charAt(0).toUpperCase() + topicId.slice(1);
+  return `
 # ${title} In-Depth Guide
 
 Welcome to the comprehensive guide on **${title}**. In this module, we will explore the intricate details that differentiate a novice from an expert.

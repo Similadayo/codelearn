@@ -1,4 +1,29 @@
-export const curriculumData = {
+export interface Topic {
+    id: string;
+    title: string;
+    contentRef: string;
+}
+
+export interface Module {
+    id: string;
+    title: string;
+    description: string;
+    topics: Topic[];
+}
+
+export interface Track {
+    id: string;
+    title: string;
+    description: string;
+    icon: string;
+    modules: Module[];
+}
+
+export interface CurriculumData {
+    tracks: Track[];
+}
+
+export const curriculumData: CurriculumData = {
     tracks: [
         {
             id: 'backend',

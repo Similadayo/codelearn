@@ -7,8 +7,8 @@ export default function Dashboard() {
     const { user } = useAuth();
     const { submissions, gradeExercise, progress } = useAppData();
 
-    const [feedback, setFeedback] = useState({});
-    const [grades, setGrades] = useState({});
+    const [feedback, setFeedback] = useState<Record<string, string>>({});
+    const [grades, setGrades] = useState<Record<string, string>>({});
 
     if (!user) return <div style={{ padding: '3rem', textAlign: 'center' }}>Please login to view your dashboard.</div>;
 

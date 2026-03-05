@@ -2,8 +2,9 @@
 import { useSearchParams } from 'next/navigation';
 import { curriculumData } from '@/constants/curriculum';
 import Link from 'next/link';
+import { Suspense } from 'react';
 
-export default function CurriculumOverview() {
+function CurriculumOverviewContent() {
     const searchParams = useSearchParams();
     const activeTrackId = searchParams.get('track') || 'backend';
 
@@ -68,5 +69,13 @@ export default function CurriculumOverview() {
                 </div>
             )}
         </div>
+    );
+}
+
+export default function CurriculumOverview() {
+    return (
+        <Suspense fallback={<div style={{ padding: '2rem', textAlign: 'center' }}>Loading Curriculum...</div>}>
+            <CurriculumOverviewContent />
+        </Suspense>
     );
 }
