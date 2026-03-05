@@ -5,8 +5,8 @@
 
 const contentRegistry: Record<string, string> = {
 
-  // ─── BACKEND: how_internet_works ─────────────────────────────────────────────
-  how_internet_works: `
+  // ─── BACKEND: internet ───────────────────────────────────────────────────────
+  internet: `
 # How the Internet Works
 
 Before you write a single line of backend code, you need to understand the infrastructure your code will run on top of. The Internet is not magic — it is a massive global network of computers communicating using agreed-upon rules called **protocols**.
@@ -111,8 +111,8 @@ Your backend code lives on the **server** side.
 Submit your answer in the text box below. Your lecturer will review it and provide feedback.
 `,
 
-  // ─── BACKEND: http_rest ────────────────────────────────────────────────────
-  http_rest: `
+  // ─── BACKEND: rest_apis ────────────────────────────────────────────────────
+  rest_apis: `
 # HTTP & REST APIs
 
 HTTP is the backbone of all web communication. As a backend developer, understanding HTTP deeply — not just "it's how websites work" — is absolutely essential. Every API you build will speak HTTP.
@@ -296,8 +296,8 @@ app.listen(3000, () => console.log('API running on port 3000'));
 Submit your code file(s) and briefly explain your design decisions.
 `,
 
-  // ─── BACKEND: sql_fundamentals ─────────────────────────────────────────────
-  sql_fundamentals: `
+  // ─── BACKEND: sql ──────────────────────────────────────────────────────────
+  sql: `
 # SQL Fundamentals
 
 Databases are where your application's data *lives*. SQL (Structured Query Language) is the language you use to talk to relational databases like PostgreSQL, MySQL, and SQLite. This is not optional knowledge — it is foundational.
@@ -505,8 +505,8 @@ Create a PostgreSQL (or SQLite) database schema and queries for a simple library
 Submit your SQL file with all CREATE TABLE, INSERT, and SELECT statements.
 `,
 
-  // ─── BACKEND: nodejs_basics ────────────────────────────────────────────────
-  nodejs_basics: `
+  // ─── BACKEND: servers (Node.js basics) ─────────────────────────────────────
+  servers: `
 # Node.js Fundamentals
 
 Node.js lets you run JavaScript on a server — outside the browser. It powers some of the most scalable systems in the world (Netflix, LinkedIn, PayPal all use it). Understanding *how* it works, not just how to use it, will make you a far better backend developer.
@@ -719,7 +719,7 @@ Build a Node.js HTTP server (using only built-in modules — no Express) that:
 Submit your \`server.js\` file.
 `,
 
-  // ─── FRONTEND: html ────────────────────────────────────────────────────────
+  // ─── FRONTEND: html (also html_basics) ─────────────────────────────────────
   html: `
 # Semantic HTML5 & Accessibility
 
@@ -931,7 +931,7 @@ export function getMockContent(trackId: string, moduleId: string, topicId: strin
   }
 
   // Try track_topicId combination
-  const trackTopicKey = \`\${trackId}_\${topicId}\`;
+  const trackTopicKey = trackId + '_' + topicId;
   if (contentRegistry[trackTopicKey]) {
     return contentRegistry[trackTopicKey];
   }
