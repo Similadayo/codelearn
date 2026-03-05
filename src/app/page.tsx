@@ -1,3 +1,4 @@
+'use client';
 import Link from 'next/link';
 import { curriculumData } from '@/constants/curriculum';
 import * as Icons from 'lucide-react';
