@@ -1,6 +1,6 @@
-'use client';
+﻿'use client';
 import Link from 'next/link';
-import { Code2, BookOpen, LayoutDashboard, LogOut, ChevronDown } from 'lucide-react';
+import { Code2, BookOpen, LayoutDashboard, LogOut } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 import { usePathname } from 'next/navigation';
 
@@ -25,7 +25,6 @@ export default function Navbar() {
             borderBottom: '1px solid rgba(99, 102, 241, 0.12)',
             boxShadow: '0 4px 30px rgba(0,0,0,0.3)',
         }}>
-            {/* Logo */}
             <Link href="/" style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', textDecoration: 'none' }}>
                 <div style={{
                     width: '34px', height: '34px',
@@ -36,12 +35,16 @@ export default function Navbar() {
                 }}>
                     <Code2 size={18} color="white" />
                 </div>
-                <span style={{ fontWeight: 800, fontSize: '1.2rem', letterSpacing: '-0.02em' }}>
-                    Code<span style={{ background: 'linear-gradient(135deg, #6366f1, #8b5cf6)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>Learn</span>
-                </span>
+                <div>
+                    <span style={{ fontWeight: 800, fontSize: '1.2rem', letterSpacing: '-0.02em', display: 'block', lineHeight: 1 }}>
+                        Code<span style={{ background: 'linear-gradient(135deg, #6366f1, #8b5cf6)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>Learn</span>
+                    </span>
+                    <span style={{ fontSize: '0.68rem', color: 'var(--text-muted)', letterSpacing: '0.08em', textTransform: 'uppercase' }}>
+                        Local demo mode
+                    </span>
+                </div>
             </Link>
 
-            {/* Nav Links */}
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
                 {navLinks.map(link => {
                     const isActive = pathname.startsWith(link.href);
@@ -77,7 +80,6 @@ export default function Navbar() {
                 })}
             </div>
 
-            {/* Auth */}
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
                 {user ? (
                     <>
@@ -93,7 +95,7 @@ export default function Navbar() {
                             textTransform: 'uppercase',
                         }}>
                             <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: user.role === 'lecturer' ? '#fbbf24' : '#6366f1', display: 'inline-block' }} />
-                            {user.role}
+                            {user.name}
                         </div>
                         <button onClick={logout} className="btn-outline" style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
                             <LogOut size={14} />
@@ -103,10 +105,10 @@ export default function Navbar() {
                 ) : (
                     <>
                         <button onClick={() => login('student')} className="btn-ghost">
-                            Student Login
+                            New Student Demo
                         </button>
                         <button onClick={() => login('lecturer')} className="btn" style={{ padding: '0.55rem 1.2rem', fontSize: '0.875rem' }}>
-                            Lecturer Login
+                            Lecturer Demo
                         </button>
                     </>
                 )}
@@ -114,3 +116,4 @@ export default function Navbar() {
         </nav>
     );
 }
+

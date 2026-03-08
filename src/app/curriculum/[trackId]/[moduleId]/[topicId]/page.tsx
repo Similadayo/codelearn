@@ -1,8 +1,9 @@
-'use client';
+﻿'use client';
 import { useAuth } from '@/context/AuthContext';
 import { useAppData } from '@/context/AppDataContext';
 import { curriculumData, backendLanguages } from '@/constants/curriculum';
 import { getMockContent } from '@/lib/content';
+import { buildSubmissionId, buildTopicKey, formatTopicPath } from '@/lib/lessonKeys';
 import { useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 import ReactMarkdown from 'react-markdown';
@@ -36,10 +37,11 @@ export default function TopicPage({ params }: TopicPageProps) {
   const topic = moduleInfo?.topics.find(t => t.id === topicId);
   const topicIndex = moduleInfo?.topics.findIndex(t => t.id === topicId) ?? 0;
   const content = getMockContent(trackId, moduleId, topicId, selectedLang);
-
-  const exerciseId = `${topicId}_${user?.id || 'guest'}`;
-  const existingSubmission = submissions[exerciseId];
-  const isCompleted = !!progress[topicId];
+  const topicKey = buildTopicKey(trackId, moduleId, topicId);
+  const submissionId = user ? buildSubmissionId(user.id, topicKey) : '';
+  const existingSubmission = submissionId ? submissions[submissionId] : undefined;
+  const isCompleted = !!progress[topicKey];
+  const estimatedReadingTime = Math.max(12, Math.round(content.split(/\s+/).length / 190));
 
   if (!topic) {
     return (
@@ -50,17 +52,22 @@ export default function TopicPage({ params }: TopicPageProps) {
   }
 
   const handleSubmit = () => {
-    if (!codeData.trim()) return;
-    submitExercise(exerciseId, codeData);
-    markTopicCompleted(topicId);
+    if (!codeData.trim() || !user) return;
+    submitExercise({
+      submissionId,
+      topicKey,
+      trackId,
+      moduleId,
+      topicId,
+      code: codeData,
+    });
+    markTopicCompleted(topicKey);
     setSubmitted(true);
   };
 
   return (
     <div style={{ display: 'flex', minHeight: 'calc(100vh - 4.5rem)' }}>
-      {/* MAIN READING AREA */}
       <div style={{ flex: 1, padding: '2.5rem 3rem', maxWidth: '780px', overflowY: 'auto' }}>
-        {/* Breadcrumb */}
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', marginBottom: '2rem', flexWrap: 'wrap' }}>
           <Link href="/curriculum" style={{ color: 'var(--text-muted)', fontSize: '0.85rem', display: 'flex', alignItems: 'center', gap: '0.3rem', transition: 'color 0.2s' }}
             onMouseEnter={e => (e.currentTarget.style.color = 'var(--text-secondary)')}
@@ -69,7 +76,7 @@ export default function TopicPage({ params }: TopicPageProps) {
             <ArrowLeft size={14} /> Curriculum
           </Link>
           <ChevronRight size={12} color="var(--text-muted)" />
-          <Link href={`/curriculum?track=${trackId}`} style={{ color: 'var(--text-muted)', fontSize: '0.85rem' }}>
+          <Link href={`/curriculum?track=${trackId}${selectedLang ? `&lang=${selectedLang}` : ''}`} style={{ color: 'var(--text-muted)', fontSize: '0.85rem' }}>
             {track?.title}
           </Link>
           <ChevronRight size={12} color="var(--text-muted)" />
@@ -78,9 +85,8 @@ export default function TopicPage({ params }: TopicPageProps) {
           <span style={{ color: 'var(--text-primary)', fontSize: '0.85rem', fontWeight: 500 }}>{topic.title}</span>
         </div>
 
-        {/* Topic Header */}
         <div style={{ marginBottom: '2.5rem' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '0.75rem' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '0.75rem', flexWrap: 'wrap' }}>
             <span style={{
               fontFamily: 'JetBrains Mono, monospace', fontSize: '0.72rem',
               color: 'var(--text-muted)', fontWeight: 700
@@ -97,16 +103,23 @@ export default function TopicPage({ params }: TopicPageProps) {
                 <CheckCircle2 size={11} /> Completed
               </span>
             )}
+            {user?.demoMode && (
+              <span className="tag tag-novice">Local demo state</span>
+            )}
           </div>
           <h1 style={{ fontSize: '2rem', fontWeight: 800, lineHeight: 1.2, marginBottom: '0.5rem' }}>
             {topic.title}
           </h1>
           <p style={{ color: 'var(--text-muted)', fontSize: '0.85rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-            <Clock size={13} /> Estimated reading time: 15–20 min
+            <Clock size={13} /> Estimated reading time: {estimatedReadingTime}-{estimatedReadingTime + 4} min
           </p>
+          {selectedLangInfo && (
+            <p style={{ color: selectedLangInfo.color, fontSize: '0.82rem', marginTop: '0.75rem' }}>
+              Backend path: {selectedLangInfo.name} with {selectedLangInfo.framework}
+            </p>
+          )}
         </div>
 
-        {/* CONTENT */}
         <div className="markdown-content">
           <ReactMarkdown
             components={{
@@ -122,10 +135,7 @@ export default function TopicPage({ params }: TopicPageProps) {
               hr: ({ ...props }) => <hr {...props} />,
               table: ({ ...props }) => (
                 <div style={{ overflowX: 'auto', marginBottom: '1.5rem' }}>
-                  <table style={{
-                    width: '100%', borderCollapse: 'collapse',
-                    fontSize: '0.875rem',
-                  }} {...props} />
+                  <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.875rem' }} {...props} />
                 </div>
               ),
               th: ({ ...props }) => (
@@ -174,7 +184,6 @@ export default function TopicPage({ params }: TopicPageProps) {
           </ReactMarkdown>
         </div>
 
-        {/* EXERCISE SECTION */}
         <div style={{
           marginTop: '3rem', paddingTop: '2.5rem',
           borderTop: '1px solid rgba(99,102,241,0.2)',
@@ -189,7 +198,9 @@ export default function TopicPage({ params }: TopicPageProps) {
             </div>
             <div>
               <h2 style={{ fontSize: '1.25rem', fontWeight: 700, margin: 0 }}>Submit Your Work</h2>
-              <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)', margin: 0 }}>Your lecturer will review and grade your submission</p>
+              <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)', margin: 0 }}>
+                Saved locally in this browser for the active demo account.
+              </p>
             </div>
           </div>
 
@@ -201,14 +212,14 @@ export default function TopicPage({ params }: TopicPageProps) {
               color: 'var(--text-secondary)', fontSize: '0.9rem',
             }}>
               <Lock size={16} color="var(--accent-indigo)" />
-              Login as a Student to submit exercises and track your progress.
+              Start a student demo profile to submit exercises and track progress locally.
             </div>
           )}
 
           {user?.role === 'student' && !existingSubmission && !submitted && (
             <div>
               <p style={{ color: 'var(--text-secondary)', marginBottom: '1rem', fontSize: '0.9rem' }}>
-                Write your answer, code, or explanation in the box below. Be thorough — your lecturer will give you detailed feedback.
+                Write your answer, code, or explanation in the box below. Be thorough. The lecturer demo account can review what you submit later in the same browser.
               </p>
               <textarea
                 className="input"
@@ -237,7 +248,7 @@ export default function TopicPage({ params }: TopicPageProps) {
               <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', marginBottom: '0.75rem' }}>
                 <CheckCircle2 size={18} color="#34d399" />
                 <span style={{ fontWeight: 700, color: '#34d399', fontSize: '0.95rem' }}>
-                  {existingSubmission?.status === 'graded' ? 'Graded' : 'Submitted — Awaiting Review'}
+                  {existingSubmission?.status === 'graded' ? 'Graded' : 'Submitted - Awaiting Review'}
                 </span>
               </div>
               {existingSubmission?.status === 'graded' && (
@@ -272,7 +283,7 @@ export default function TopicPage({ params }: TopicPageProps) {
                 <BookMarked size={18} color="#fbbf24" />
                 <div>
                   <p style={{ fontWeight: 600, color: 'var(--text-primary)', margin: 0 }}>Lecturer View</p>
-                  <p style={{ color: 'var(--text-muted)', fontSize: '0.82rem', margin: 0 }}>Grade student submissions from the dashboard</p>
+                  <p style={{ color: 'var(--text-muted)', fontSize: '0.82rem', margin: 0 }}>Review submissions from every local demo student in this browser</p>
                 </div>
               </div>
               <Link href="/dashboard" className="btn" style={{
@@ -287,7 +298,6 @@ export default function TopicPage({ params }: TopicPageProps) {
         </div>
       </div>
 
-      {/* RIGHT SIDEBAR — Module Navigation */}
       <aside style={{
         width: '260px', flexShrink: 0, padding: '2.5rem 1.25rem',
         borderLeft: '1px solid rgba(255,255,255,0.06)',
@@ -299,9 +309,9 @@ export default function TopicPage({ params }: TopicPageProps) {
         </p>
         {moduleInfo?.topics.map((t, i) => {
           const isCurrentTopic = t.id === topicId;
-          const isDone = !!progress[t.id];
+          const isDone = !!progress[buildTopicKey(trackId, moduleId, t.id)];
           return (
-            <Link key={t.id} href={`/curriculum/${trackId}/${moduleId}/${t.id}`}>
+            <Link key={t.id} href={formatTopicPath(trackId, moduleId, t.id, selectedLang || undefined)}>
               <div style={{
                 display: 'flex', alignItems: 'center', gap: '0.6rem',
                 padding: '0.6rem 0.75rem',
@@ -316,7 +326,7 @@ export default function TopicPage({ params }: TopicPageProps) {
                   color: isCurrentTopic ? 'var(--accent-indigo)' : 'var(--text-muted)',
                   fontWeight: 700, minWidth: '20px',
                 }}>
-                  {isDone ? '✓' : String(i + 1).padStart(2, '0')}
+                  {isDone ? '?' : String(i + 1).padStart(2, '0')}
                 </span>
                 <span style={{
                   fontSize: '0.82rem',
@@ -334,3 +344,4 @@ export default function TopicPage({ params }: TopicPageProps) {
     </div>
   );
 }
+

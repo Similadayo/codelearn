@@ -1,19 +1,19 @@
 'use client';
 import Link from 'next/link';
-import { curriculumData, Track } from '@/constants/curriculum';
+import { curriculumData } from '@/constants/curriculum';
 import {
     Server, Monitor, Smartphone, Database,
     Cloud, Shield, ArrowRight, BookOpen,
-    Users, Award, Zap, CheckCircle
+    Award, Zap, CheckCircle
 } from 'lucide-react';
 
-const trackConfig: Record<string, { icon: React.ElementType; color: string; gradient: string; modules: number }> = {
-    backend: { icon: Server, color: '#6366f1', gradient: 'linear-gradient(135deg, #6366f1, #8b5cf6)', modules: 5 },
-    frontend: { icon: Monitor, color: '#06b6d4', gradient: 'linear-gradient(135deg, #06b6d4, #3b82f6)', modules: 5 },
-    mobile: { icon: Smartphone, color: '#10b981', gradient: 'linear-gradient(135deg, #10b981, #06b6d4)', modules: 5 },
-    'data-science': { icon: Database, color: '#f59e0b', gradient: 'linear-gradient(135deg, #f59e0b, #ef4444)', modules: 5 },
-    devops: { icon: Cloud, color: '#f43f5e', gradient: 'linear-gradient(135deg, #f43f5e, #8b5cf6)', modules: 5 },
-    cybersecurity: { icon: Shield, color: '#ef4444', gradient: 'linear-gradient(135deg, #ef4444, #f97316)', modules: 5 },
+const trackConfig: Record<string, { icon: React.ElementType; color: string; gradient: string }> = {
+    backend: { icon: Server, color: '#6366f1', gradient: 'linear-gradient(135deg, #6366f1, #8b5cf6)' },
+    frontend: { icon: Monitor, color: '#06b6d4', gradient: 'linear-gradient(135deg, #06b6d4, #3b82f6)' },
+    mobile: { icon: Smartphone, color: '#10b981', gradient: 'linear-gradient(135deg, #10b981, #06b6d4)' },
+    'data-science': { icon: Database, color: '#f59e0b', gradient: 'linear-gradient(135deg, #f59e0b, #ef4444)' },
+    devops: { icon: Cloud, color: '#f43f5e', gradient: 'linear-gradient(135deg, #f43f5e, #8b5cf6)' },
+    cybersecurity: { icon: Shield, color: '#ef4444', gradient: 'linear-gradient(135deg, #ef4444, #f97316)' },
 };
 
 const featureHighlights = [
