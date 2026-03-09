@@ -1,10 +1,11 @@
 'use client';
-import { BackendLanguage } from '@/constants/curriculum';
+import { CurriculumStack } from '@/constants/curriculum';
 import { CheckCircle2, TrendingUp, Briefcase, Star, ArrowRight } from 'lucide-react';
 
 interface LanguagePickerProps {
-    languages: BackendLanguage[];
-    onSelect: (langId: string) => void;
+    trackTitle: string;
+    stacks: CurriculumStack[];
+    onSelect: (stackId: string) => void;
 }
 
 const popularityData: Record<string, { jobs: string; difficulty: string; stars: number }> = {
@@ -25,7 +26,7 @@ const featureTags: Record<string, string[]> = {
     ruby: ['Convention over config', 'Rails magic', 'Rapid prototyping', 'Used at GitHub, Shopify, Airbnb'],
 };
 
-export default function LanguagePicker({ languages, onSelect }: LanguagePickerProps) {
+export default function LanguagePicker({ trackTitle, stacks, onSelect }: LanguagePickerProps) {
     return (
         <div style={{ padding: '3rem 2.5rem', maxWidth: '1100px', margin: '0 auto' }}>
             {/* Header */}
@@ -38,7 +39,7 @@ export default function LanguagePicker({ languages, onSelect }: LanguagePickerPr
                     letterSpacing: '0.08em', textTransform: 'uppercase',
                     marginBottom: '1.25rem',
                 }}>
-                    Backend Engineering Track
+                    {trackTitle} Track
                 </div>
                 <h1 style={{ fontSize: 'clamp(2rem, 4vw, 3rem)', fontWeight: 800, lineHeight: 1.15, marginBottom: '0.75rem' }}>
                     First, pick your{' '}
@@ -46,12 +47,12 @@ export default function LanguagePicker({ languages, onSelect }: LanguagePickerPr
                         background: 'linear-gradient(135deg, #6366f1, #8b5cf6, #06b6d4)',
                         WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text'
                     }}>
-                        language
+                        stack
                     </span>
                 </h1>
                 <p style={{ color: 'var(--text-secondary)', fontSize: '1.05rem', maxWidth: '580px', lineHeight: 1.7 }}>
-                    The backend concepts are universal, but the code, frameworks, and tooling differ.
-                    Choose your language and we'll tailor the entire curriculum — code examples, exercises, and all — to it.
+                    The core ideas are transferable, but the code, frameworks, and tooling differ by stack.
+                    Choose your path and we&apos;ll tailor the curriculum examples, exercises, and terminology to it.
                 </p>
             </div>
 
@@ -62,7 +63,7 @@ export default function LanguagePicker({ languages, onSelect }: LanguagePickerPr
                 gap: '1.25rem',
                 marginBottom: '3rem',
             }}>
-                {languages.map(lang => {
+                {stacks.map(lang => {
                     const meta = popularityData[lang.id];
                     const tags = featureTags[lang.id] || [];
                     return (
@@ -175,8 +176,8 @@ export default function LanguagePicker({ languages, onSelect }: LanguagePickerPr
             }}>
                 <CheckCircle2 size={16} color="#6366f1" style={{ flexShrink: 0 }} />
                 <span>
-                    <strong style={{ color: 'var(--text-primary)' }}>You can change your language later.</strong>
-                    {' '}The curriculum structure stays the same — only the code examples change.
+                    <strong style={{ color: 'var(--text-primary)' }}>You can change your stack later.</strong>
+                    {' '}The curriculum structure stays the same — only the stack-specific guidance changes.
                 </span>
             </div>
         </div>

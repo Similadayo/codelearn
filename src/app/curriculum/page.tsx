@@ -1,7 +1,7 @@
 'use client';
 import { Suspense, useState, useEffect } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
-import { curriculumData, backendLanguages } from '@/constants/curriculum';
+import { curriculumData, getTrackSupportedLanguages, topicUsesStackVariant } from '@/constants/curriculum';
 import LanguagePicker from '@/components/LanguagePicker';
 import Link from 'next/link';
 import { Server, Monitor, Smartphone, Database, Cloud, Shield, ChevronRight, BookOpen, Zap, X, Code2 } from 'lucide-react';
@@ -36,7 +36,9 @@ const phaseLabels: Record<string, string> = {
     phase7: 'Advanced APIs', phase8: 'Infrastructure', phase9: 'System Design',
 };
 
-const LANG_STORAGE_KEY = 'codelearn_backend_lang';
+function getStackStorageKey(trackId: string) {
+    return `codelearn_stack_${trackId}`;
+}
 
 function CurriculumContent() {
     const searchParams = useSearchParams();
@@ -46,37 +48,36 @@ function CurriculumContent() {
     const config = trackConfig[activeTrackId] || trackConfig.backend;
     const Icon = config.icon;
 
-    // Language selection state (only relevant for backend)
     const [selectedLang, setSelectedLang] = useState<string | null>(null);
     const [langLoaded, setLangLoaded] = useState(false);
+    const trackStacks = getTrackSupportedLanguages(activeTrackId);
+    const trackNeedsStack = trackStacks.length > 0;
 
     useEffect(() => {
-        // Load from URL param first, then localStorage
         const langFromUrl = searchParams.get('lang');
         if (langFromUrl) {
             setSelectedLang(langFromUrl);
         } else {
-            const saved = localStorage.getItem(LANG_STORAGE_KEY);
+            const saved = localStorage.getItem(getStackStorageKey(activeTrackId));
             if (saved) setSelectedLang(saved);
         }
         setLangLoaded(true);
-    }, [searchParams]);
+    }, [activeTrackId, searchParams]);
 
     const handleSelectLanguage = (langId: string) => {
         setSelectedLang(langId);
-        localStorage.setItem(LANG_STORAGE_KEY, langId);
-        router.replace(`/curriculum?track=backend&lang=${langId}`, { scroll: false });
+        localStorage.setItem(getStackStorageKey(activeTrackId), langId);
+        router.replace(`/curriculum?track=${activeTrackId}&lang=${langId}`, { scroll: false });
     };
 
     const handleChangeLang = () => {
         setSelectedLang(null);
-        localStorage.removeItem(LANG_STORAGE_KEY);
-        router.replace('/curriculum?track=backend', { scroll: false });
+        localStorage.removeItem(getStackStorageKey(activeTrackId));
+        router.replace(`/curriculum?track=${activeTrackId}`, { scroll: false });
     };
 
-    const isBackend = activeTrackId === 'backend';
-    const needsLangPicker = isBackend && langLoaded && !selectedLang;
-    const selectedLangInfo = backendLanguages.find(l => l.id === selectedLang);
+    const needsLangPicker = trackNeedsStack && langLoaded && !selectedLang;
+    const selectedLangInfo = trackStacks.find(l => l.id === selectedLang);
 
     return (
         <div style={{ display: 'flex', minHeight: 'calc(100vh - 4.5rem)' }}>
@@ -98,7 +99,7 @@ function CurriculumContent() {
                     const TIcon = tc.icon;
                     const isActive = activeTrackId === track.id;
                     return (
-                        <Link key={track.id} href={`/curriculum?track=${track.id}`} onClick={track.id !== 'backend' ? undefined : handleChangeLang}>
+                        <Link key={track.id} href={`/curriculum?track=${track.id}`}>
                             <div style={{
                                 display: 'flex', alignItems: 'center', gap: '0.65rem',
                                 padding: '0.6rem 0.65rem',
@@ -125,11 +126,10 @@ function CurriculumContent() {
                     );
                 })}
 
-                {/* Language indicator for backend */}
-                {isBackend && selectedLangInfo && (
+                {trackNeedsStack && selectedLangInfo && (
                     <div style={{ marginTop: '1.5rem', padding: '0 0.5rem' }}>
                         <p style={{ fontSize: '0.68rem', fontWeight: 700, color: 'var(--text-muted)', letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: '0.5rem' }}>
-                            LANGUAGE
+                            STACK
                         </p>
                         <div style={{
                             display: 'flex', alignItems: 'center', justifyContent: 'space-between',
@@ -152,7 +152,7 @@ function CurriculumContent() {
                             <button
                                 onClick={handleChangeLang}
                                 style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '2px', color: 'var(--text-muted)', display: 'flex', alignItems: 'center' }}
-                                title="Change language"
+                                title="Change stack"
                             >
                                 <X size={13} />
                             </button>
@@ -163,10 +163,10 @@ function CurriculumContent() {
 
             {/* MAIN CONTENT */}
             <div style={{ flex: 1, overflowY: 'auto' }}>
-                {/* Show language picker if backend and no language chosen */}
                 {needsLangPicker ? (
                     <LanguagePicker
-                        languages={backendLanguages}
+                        trackTitle={activeTrack?.title ?? activeTrackId}
+                        stacks={trackStacks}
                         onSelect={handleSelectLanguage}
                     />
                 ) : activeTrack ? (
@@ -191,8 +191,7 @@ function CurriculumContent() {
                                 </div>
                             </div>
 
-                            {/* Language badge for backend */}
-                            {isBackend && selectedLangInfo && (
+                            {trackNeedsStack && selectedLangInfo && (
                                 <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', flexWrap: 'wrap' }}>
                                     <div style={{
                                         display: 'flex', alignItems: 'center', gap: '0.5rem',
@@ -215,7 +214,7 @@ function CurriculumContent() {
                                         className="btn-ghost"
                                         style={{ padding: '0.4rem 0.9rem', fontSize: '0.78rem' }}
                                     >
-                                        <Code2 size={12} /> Change Language
+                                        <Code2 size={12} /> Change Stack
                                     </button>
                                 </div>
                             )}
@@ -226,7 +225,7 @@ function CurriculumContent() {
                             {[
                                 { label: 'Phases', value: activeTrack.modules.length },
                                 { label: 'Topics', value: activeTrack.modules.reduce((a, m) => a + m.topics.length, 0) },
-                                { label: 'Difficulty', value: activeTrackId === 'backend' ? 'Moderate' : 'Varies' },
+                                { label: 'Difficulty', value: trackNeedsStack ? 'Stack-based' : 'Varies' },
                             ].map(s => (
                                 <div key={s.label} style={{
                                     padding: '0.75rem 1.25rem', borderRadius: '12px',
@@ -245,7 +244,7 @@ function CurriculumContent() {
                                 const tagClass = levelTagMap[module.id] || 'tag-novice';
                                 const phaseColor = phaseColors[module.id] || config.color;
                                 const phaseLabel = phaseLabels[module.id] || module.id;
-                                const totalLangSpecific = module.topics.filter(t => t.langSpecific).length;
+                                const totalLangSpecific = module.topics.filter(t => topicUsesStackVariant(activeTrack, t)).length;
 
                                 return (
                                     <div key={module.id} style={{
@@ -271,14 +270,14 @@ function CurriculumContent() {
                                                             {String(moduleIndex + 1).padStart(2, '0')} / {activeTrack.modules.length}
                                                         </span>
                                                         <span className={`tag ${tagClass}`}>{phaseLabel}</span>
-                                                        {isBackend && totalLangSpecific > 0 && selectedLangInfo && (
+                                                        {trackNeedsStack && totalLangSpecific > 0 && selectedLangInfo && (
                                                             <span style={{
                                                                 fontSize: '0.68rem', fontWeight: 600,
                                                                 color: selectedLangInfo.color, background: `${selectedLangInfo.color}15`,
                                                                 padding: '0.1rem 0.5rem', borderRadius: '9999px',
                                                                 border: `1px solid ${selectedLangInfo.color}30`,
                                                             }}>
-                                                                {selectedLangInfo.emoji} {totalLangSpecific} lang-specific
+                                                                {selectedLangInfo.emoji} {totalLangSpecific} stack-specific
                                                             </span>
                                                         )}
                                                     </div>
@@ -309,7 +308,7 @@ function CurriculumContent() {
                                                             </span>
                                                         </div>
                                                         <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                                                            {topic.langSpecific && isBackend && selectedLangInfo && (
+                                                            {topicUsesStackVariant(activeTrack, topic) && selectedLangInfo && (
                                                                 <span style={{ fontSize: '0.65rem', color: selectedLangInfo.color, opacity: 0.8 }}>
                                                                     {selectedLangInfo.emoji}
                                                                 </span>

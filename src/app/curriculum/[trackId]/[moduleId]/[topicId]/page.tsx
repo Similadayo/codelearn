@@ -1,10 +1,10 @@
 ﻿'use client';
 import { useAuth } from '@/context/AuthContext';
 import { useAppData } from '@/context/AppDataContext';
-import { curriculumData, backendLanguages } from '@/constants/curriculum';
+import { curriculumData, topicUsesStackVariant } from '@/constants/curriculum';
 import { getMockContent } from '@/lib/content';
 import { buildSubmissionId, buildTopicKey, formatTopicPath } from '@/lib/lessonKeys';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 import ReactMarkdown from 'react-markdown';
 import Link from 'next/link';
@@ -27,21 +27,64 @@ export default function TopicPage({ params }: TopicPageProps) {
   const { progress, markTopicCompleted, submitExercise, submissions } = useAppData();
   const searchParams = useSearchParams();
   const selectedLang = searchParams.get('lang') || '';
-  const selectedLangInfo = backendLanguages.find(l => l.id === selectedLang);
 
   const [codeData, setCodeData] = useState('');
   const [submitted, setSubmitted] = useState(false);
-
   const track = curriculumData.tracks.find(t => t.id === trackId);
+  const selectedLangInfo = track?.supportedLanguages?.find(l => l.id === selectedLang);
   const moduleInfo = track?.modules.find(m => m.id === moduleId);
   const topic = moduleInfo?.topics.find(t => t.id === topicId);
   const topicIndex = moduleInfo?.topics.findIndex(t => t.id === topicId) ?? 0;
-  const content = getMockContent(trackId, moduleId, topicId, selectedLang);
+  const fallbackContent = getMockContent(trackId, moduleId, topicId, selectedLang);
+  const [content, setContent] = useState(fallbackContent);
+  const [contentSource, setContentSource] = useState<'file' | 'fallback'>('fallback');
   const topicKey = buildTopicKey(trackId, moduleId, topicId);
   const submissionId = user ? buildSubmissionId(user.id, topicKey) : '';
   const existingSubmission = submissionId ? submissions[submissionId] : undefined;
   const isCompleted = !!progress[topicKey];
   const estimatedReadingTime = Math.max(12, Math.round(content.split(/\s+/).length / 190));
+
+  useEffect(() => {
+    setContent(fallbackContent);
+    setContentSource('fallback');
+  }, [fallbackContent]);
+
+  useEffect(() => {
+    const controller = new AbortController();
+    const params = new URLSearchParams({
+      trackId,
+      moduleId,
+      topicId,
+    });
+
+    if (selectedLang) {
+      params.set('lang', selectedLang);
+    }
+
+    fetch(`/api/content?${params.toString()}`, { signal: controller.signal })
+      .then(async (response) => {
+        if (!response.ok) {
+          throw new Error(`Content request failed with status ${response.status}`);
+        }
+
+        return response.json();
+      })
+      .then((payload) => {
+        if (typeof payload?.content === 'string' && payload.content.trim()) {
+          setContent(payload.content);
+        }
+        if (payload?.source === 'file' || payload?.source === 'fallback') {
+          setContentSource(payload.source);
+        }
+      })
+      .catch((error) => {
+        if (error.name !== 'AbortError') {
+          console.error('Failed to load topic markdown:', error);
+        }
+      });
+
+    return () => controller.abort();
+  }, [trackId, moduleId, topicId, selectedLang]);
 
   if (!topic) {
     return (
@@ -106,6 +149,22 @@ export default function TopicPage({ params }: TopicPageProps) {
             {user?.demoMode && (
               <span className="tag tag-novice">Local demo state</span>
             )}
+            <span style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '0.3rem',
+              fontSize: '0.75rem',
+              fontWeight: 600,
+              color: contentSource === 'file' ? '#38bdf8' : '#f59e0b',
+              background: contentSource === 'file' ? 'rgba(56,189,248,0.12)' : 'rgba(245,158,11,0.12)',
+              padding: '0.15rem 0.6rem',
+              borderRadius: '9999px',
+              border: contentSource === 'file'
+                ? '1px solid rgba(56,189,248,0.25)'
+                : '1px solid rgba(245,158,11,0.25)',
+            }}>
+              {contentSource === 'file' ? 'Authored Markdown' : 'Generated Fallback'}
+            </span>
           </div>
           <h1 style={{ fontSize: '2rem', fontWeight: 800, lineHeight: 1.2, marginBottom: '0.5rem' }}>
             {topic.title}
@@ -113,9 +172,9 @@ export default function TopicPage({ params }: TopicPageProps) {
           <p style={{ color: 'var(--text-muted)', fontSize: '0.85rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
             <Clock size={13} /> Estimated reading time: {estimatedReadingTime}-{estimatedReadingTime + 4} min
           </p>
-          {selectedLangInfo && (
+          {selectedLangInfo && topic && track && topicUsesStackVariant(track, topic) && (
             <p style={{ color: selectedLangInfo.color, fontSize: '0.82rem', marginTop: '0.75rem' }}>
-              Backend path: {selectedLangInfo.name} with {selectedLangInfo.framework}
+              Stack path: {selectedLangInfo.name} with {selectedLangInfo.framework}
             </p>
           )}
         </div>

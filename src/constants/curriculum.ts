@@ -2,7 +2,7 @@ export interface Topic {
     id: string;
     title: string;
     contentRef: string;
-    langSpecific?: boolean; // if true, content changes based on selected language
+    langSpecific?: boolean; // if true, content changes based on selected stack
 }
 
 export interface Module {
@@ -12,7 +12,7 @@ export interface Module {
     topics: Topic[];
 }
 
-export interface BackendLanguage {
+export interface CurriculumStack {
     id: string;
     name: string;
     framework: string;
@@ -21,12 +21,15 @@ export interface BackendLanguage {
     emoji: string;
 }
 
+export type BackendLanguage = CurriculumStack;
+
 export interface Track {
     id: string;
     title: string;
     description: string;
     icon: string;
-    supportedLanguages?: BackendLanguage[];
+    supportedLanguages?: CurriculumStack[];
+    stackScopedContent?: boolean;
     modules: Module[];
 }
 
@@ -34,7 +37,7 @@ export interface CurriculumData {
     tracks: Track[];
 }
 
-export const backendLanguages: BackendLanguage[] = [
+export const backendLanguages: CurriculumStack[] = [
     {
         id: 'nodejs',
         name: 'JavaScript / Node.js',
@@ -85,6 +88,174 @@ export const backendLanguages: BackendLanguage[] = [
     },
 ];
 
+export const frontendStacks: CurriculumStack[] = [
+    {
+        id: 'react',
+        name: 'React',
+        framework: 'Vite / Next.js',
+        tagline: 'The dominant frontend ecosystem with strong hiring demand.',
+        color: '#61dafb',
+        emoji: '⚛',
+    },
+    {
+        id: 'typescript',
+        name: 'TypeScript Frontend',
+        framework: 'React / Next.js',
+        tagline: 'Typed UI development for larger, more maintainable codebases.',
+        color: '#3178c6',
+        emoji: '🔷',
+    },
+    {
+        id: 'vue',
+        name: 'Vue',
+        framework: 'Nuxt / Vue Router',
+        tagline: 'Progressive and approachable, with a strong component model.',
+        color: '#42b883',
+        emoji: '💚',
+    },
+    {
+        id: 'angular',
+        name: 'Angular',
+        framework: 'Angular CLI / RxJS',
+        tagline: 'Structured frontend architecture for large teams and enterprise apps.',
+        color: '#dd0031',
+        emoji: '🅰',
+    },
+];
+
+export const mobileStacks: CurriculumStack[] = [
+    {
+        id: 'react-native',
+        name: 'React Native',
+        framework: 'Expo / Native APIs',
+        tagline: 'JavaScript-driven mobile development with one shared codebase.',
+        color: '#61dafb',
+        emoji: '📱',
+    },
+    {
+        id: 'flutter',
+        name: 'Flutter',
+        framework: 'Dart / Widget Tree',
+        tagline: 'Fast, polished cross-platform apps with a strong UI toolkit.',
+        color: '#42a5f5',
+        emoji: '🦋',
+    },
+    {
+        id: 'kotlin',
+        name: 'Kotlin Android',
+        framework: 'Jetpack Compose',
+        tagline: 'Modern native Android development with first-party tooling.',
+        color: '#7f52ff',
+        emoji: '🤖',
+    },
+    {
+        id: 'swift',
+        name: 'Swift iOS',
+        framework: 'SwiftUI',
+        tagline: 'Native iOS development focused on performance and platform fidelity.',
+        color: '#f05138',
+        emoji: '🍎',
+    },
+];
+
+export const dataScienceStacks: CurriculumStack[] = [
+    {
+        id: 'python-ds',
+        name: 'Python Data Stack',
+        framework: 'Pandas / Scikit-learn',
+        tagline: 'The default path for analytics, ML, and production AI workflows.',
+        color: '#3776ab',
+        emoji: '🐍',
+    },
+    {
+        id: 'r',
+        name: 'R',
+        framework: 'Tidyverse / caret',
+        tagline: 'Excellent for statistics, exploration, and research-heavy workflows.',
+        color: '#276dc3',
+        emoji: '📊',
+    },
+    {
+        id: 'julia',
+        name: 'Julia',
+        framework: 'DataFrames.jl / Flux.jl',
+        tagline: 'High-performance numerical computing with modern language ergonomics.',
+        color: '#9558b2',
+        emoji: '🧮',
+    },
+];
+
+export const devopsStacks: CurriculumStack[] = [
+    {
+        id: 'aws',
+        name: 'AWS',
+        framework: 'EKS / ECS / CloudWatch',
+        tagline: 'The broadest cloud platform with mature operational tooling.',
+        color: '#ff9900',
+        emoji: '☁',
+    },
+    {
+        id: 'azure',
+        name: 'Azure',
+        framework: 'AKS / DevOps / Monitor',
+        tagline: 'Strong enterprise cloud path with Microsoft ecosystem integration.',
+        color: '#0078d4',
+        emoji: '🔷',
+    },
+    {
+        id: 'gcp',
+        name: 'Google Cloud',
+        framework: 'GKE / Cloud Run / Operations',
+        tagline: 'Cloud-native infrastructure with strong data and Kubernetes support.',
+        color: '#4285f4',
+        emoji: '🌐',
+    },
+    {
+        id: 'kubernetes',
+        name: 'Kubernetes Platform',
+        framework: 'Helm / ArgoCD / Prometheus',
+        tagline: 'Vendor-neutral operations centered on container orchestration.',
+        color: '#326ce5',
+        emoji: '⎈',
+    },
+];
+
+export const cybersecurityStacks: CurriculumStack[] = [
+    {
+        id: 'web-appsec',
+        name: 'Web App Security',
+        framework: 'Burp Suite / OWASP Testing',
+        tagline: 'Hands-on vulnerability discovery and remediation for web systems.',
+        color: '#f97316',
+        emoji: '🛡',
+    },
+    {
+        id: 'network-security',
+        name: 'Network Security',
+        framework: 'Wireshark / Zeek / IDS',
+        tagline: 'Traffic analysis, detection engineering, and defensive visibility.',
+        color: '#ef4444',
+        emoji: '🕸',
+    },
+    {
+        id: 'red-team',
+        name: 'Red Teaming',
+        framework: 'Kali / Metasploit / AD tooling',
+        tagline: 'Adversarial tradecraft, privilege escalation, and offensive operations.',
+        color: '#b91c1c',
+        emoji: '🎯',
+    },
+];
+
+export function getTrackSupportedLanguages(trackId: string): CurriculumStack[] {
+    const track = curriculumData.tracks.find((entry) => entry.id === trackId);
+    return track?.supportedLanguages ?? [];
+}
+
+export function topicUsesStackVariant(track: Track, topic: Topic): boolean {
+    return topic.langSpecific ?? !!track.stackScopedContent;
+}
+
 export const curriculumData: CurriculumData = {
     tracks: [
         {
@@ -93,6 +264,7 @@ export const curriculumData: CurriculumData = {
             description: 'Master server-side development — from your first line of code to designing distributed systems at scale.',
             icon: 'Server',
             supportedLanguages: backendLanguages,
+            stackScopedContent: true,
             modules: [
                 {
                     id: 'phase1',
@@ -218,6 +390,8 @@ export const curriculumData: CurriculumData = {
             title: 'Frontend Engineering',
             description: 'Build stunning user interfaces and complex client-side applications.',
             icon: 'Monitor',
+            supportedLanguages: frontendStacks,
+            stackScopedContent: true,
             modules: [
                 {
                     id: 'novice',
@@ -276,6 +450,8 @@ export const curriculumData: CurriculumData = {
             title: 'Mobile App Development',
             description: 'Create native and cross-platform applications for iOS and Android.',
             icon: 'Smartphone',
+            supportedLanguages: mobileStacks,
+            stackScopedContent: true,
             modules: [
                 {
                     id: 'novice',
@@ -331,6 +507,8 @@ export const curriculumData: CurriculumData = {
             title: 'Data Science & AI',
             description: 'Extract insights from data and build intelligent machine learning models.',
             icon: 'Database',
+            supportedLanguages: dataScienceStacks,
+            stackScopedContent: true,
             modules: [
                 {
                     id: 'novice',
@@ -384,6 +562,8 @@ export const curriculumData: CurriculumData = {
             title: 'DevOps & Cloud Engineering',
             description: 'Automate deployments, manage cloud infrastructure, and ensure reliability.',
             icon: 'Cloud',
+            supportedLanguages: devopsStacks,
+            stackScopedContent: true,
             modules: [
                 {
                     id: 'novice',
@@ -437,6 +617,8 @@ export const curriculumData: CurriculumData = {
             title: 'Cyber Security',
             description: 'Protect systems, discover vulnerabilities, and secure data.',
             icon: 'Shield',
+            supportedLanguages: cybersecurityStacks,
+            stackScopedContent: true,
             modules: [
                 {
                     id: 'novice',

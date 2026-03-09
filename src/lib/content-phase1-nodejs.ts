@@ -2,6 +2,281 @@
 
 export const phase1NodejsContent: Record<string, string> = {
 
+    variables_types_nodejs: `
+# Variables, Data Types, and Strings in JavaScript
+
+Variables and data types are the foundation of programming. Before you can build APIs, validate user input, or store records in a database, you must understand what kind of value you are working with and how the language represents it.
+
+In backend development, weak understanding here creates expensive mistakes later. A value that looks like a number may actually be a string. A missing value may be \`undefined\` or \`null\`. A boolean may arrive from an HTTP request as the text \`"true"\` rather than the boolean value \`true\`.
+
+---
+
+## 1. What Is a Variable?
+
+A **variable** is a named location in memory that stores a value. You give the value a name so that your program can reuse it later.
+
+Think of a variable as a labeled container:
+
+- the **label** is the variable name
+- the **content** is the value inside it
+- the **type** describes what kind of value it is
+
+\`\`\`javascript
+const courseName = 'Backend Engineering';
+let studentCount = 120;
+\`\`\`
+
+In the first line, \`courseName\` is the variable name and \`'Backend Engineering'\` is the stored value.
+
+In the second line, \`studentCount\` is the variable name and \`120\` is the stored value.
+
+---
+
+## 2. \`const\`, \`let\`, and \`var\`
+
+JavaScript has three ways to declare variables, but in modern code you mainly use **\`const\`** and **\`let\`**.
+
+### \`const\`
+
+Use \`const\` when the variable should not be reassigned.
+
+\`\`\`javascript
+const school = 'CodeLearn';
+const maxScore = 100;
+\`\`\`
+
+This means the variable name must continue pointing to the same value.
+
+\`\`\`javascript
+const school = 'CodeLearn';
+school = 'Another School'; // Error
+\`\`\`
+
+Important clarification: \`const\` does **not** mean the value is frozen forever. It means the **variable binding** cannot be changed.
+
+\`\`\`javascript
+const student = { name: 'Amina', score: 75 };
+student.score = 80; // allowed
+\`\`\`
+
+### \`let\`
+
+Use \`let\` when the value needs to change.
+
+\`\`\`javascript
+let progress = 0;
+progress = progress + 1;
+\`\`\`
+
+### \`var\`
+
+\`var\` is the old way to declare variables. You will still see it in legacy code, but you should avoid it in modern backend projects because its scoping behavior is confusing.
+
+---
+
+## 3. What Is a Data Type?
+
+A **data type** tells the language what kind of value it is dealing with.
+
+In JavaScript, common primitive data types include:
+
+- **string**: text
+- **number**: integers and decimal numbers
+- **boolean**: true or false
+- **undefined**: a variable exists but has no assigned value
+- **null**: an intentional empty value
+
+Examples:
+
+\`\`\`javascript
+const username = 'Ada';      // string
+const age = 21;              // number
+const price = 19.99;         // number
+const isAdmin = false;       // boolean
+let selectedTrack;           // undefined
+const profilePhoto = null;   // null
+\`\`\`
+
+### Why types matter in backend engineering
+
+Suppose an API receives this value:
+
+\`\`\`javascript
+const quantity = '5';
+\`\`\`
+
+This looks like a number, but it is actually a **string**. If you treat it as a number without checking, calculations and validation may go wrong.
+
+---
+
+## 4. Strings
+
+A **string** is a sequence of characters used to represent text.
+
+\`\`\`javascript
+const firstName = 'Grace';
+const lastName = "Hopper";
+\`\`\`
+
+### Template literals
+
+Template literals use backticks and allow you to insert variables directly into a string.
+
+\`\`\`javascript
+const name = 'David';
+const greeting = \`Hello, \${name}\`;
+\`\`\`
+
+This is easier to read than joining strings manually.
+
+\`\`\`javascript
+const greeting = 'Hello, ' + name;
+\`\`\`
+
+### Multi-line strings
+
+\`\`\`javascript
+const note = \`This is line one.
+This is line two.
+This is line three.\`;
+\`\`\`
+
+---
+
+## 5. Worked Example: Variables and Types
+
+\`\`\`javascript
+const studentName = 'Maya';
+let score = 82;
+const passed = score >= 50;
+const summary = \`\${studentName} scored \${score}\`;
+
+console.log(summary);
+console.log(passed);
+\`\`\`
+
+### Line-by-line explanation
+
+1. \`const studentName = 'Maya';\`
+   This creates a variable called \`studentName\` and stores a string value inside it.
+
+2. \`let score = 82;\`
+   This creates a variable called \`score\` and stores a number. We use \`let\` because scores might later be updated.
+
+3. \`const passed = score >= 50;\`
+   This compares \`score\` with \`50\`. The result of the comparison is either \`true\` or \`false\`, so \`passed\` is a boolean.
+
+4. \`const summary = \`\${studentName} scored \${score}\`;\`
+   This creates a new string using a template literal. The values of \`studentName\` and \`score\` are inserted into the sentence.
+
+5. \`console.log(summary);\`
+   This prints the text stored in \`summary\`.
+
+6. \`console.log(passed);\`
+   This prints the boolean result.
+
+### Output
+
+\`\`\`text
+Maya scored 82
+true
+\`\`\`
+
+---
+
+## 6. Checking the Type of a Value
+
+JavaScript provides the \`typeof\` operator.
+
+\`\`\`javascript
+console.log(typeof 'hello');   // string
+console.log(typeof 42);        // number
+console.log(typeof true);      // boolean
+console.log(typeof undefined); // undefined
+console.log(typeof null);      // object (historical JavaScript quirk)
+\`\`\`
+
+That last line matters:
+
+\`\`\`javascript
+typeof null // "object"
+\`\`\`
+
+This is one of JavaScript's historical mistakes. You must remember it.
+
+---
+
+## 7. Common Beginner Mistakes
+
+### Mistake 1: confusing a number with a numeric string
+
+\`\`\`javascript
+const a = '5';
+const b = 2;
+console.log(a + b); // "52"
+\`\`\`
+
+Why? Because \`a\` is a string, so JavaScript performs string concatenation.
+
+If you want arithmetic:
+
+\`\`\`javascript
+const a = Number('5');
+const b = 2;
+console.log(a + b); // 7
+\`\`\`
+
+### Mistake 2: not distinguishing \`undefined\` from \`null\`
+
+- \`undefined\` usually means no value was assigned
+- \`null\` usually means the programmer intentionally set the value to empty
+
+---
+
+## 8. Why This Matters In Real Backend Systems
+
+When building APIs, values often arrive as text:
+
+- query parameters
+- form fields
+- JSON fields
+- environment variables
+
+For example, even \`process.env.PORT\` is a string:
+
+\`\`\`javascript
+const port = process.env.PORT;
+console.log(typeof port); // string
+\`\`\`
+
+So backend developers constantly convert, validate, and check types.
+
+---
+
+## 9. Study Questions
+
+1. What is the difference between a variable name and a value?
+2. Why is \`const\` usually preferred over \`let\`?
+3. What is the difference between the string \`'5'\` and the number \`5\`?
+4. Why is \`typeof null\` considered a JavaScript quirk?
+5. Why do backend developers need strong type awareness even in JavaScript?
+
+---
+
+## 10. Exercise
+
+Create a file called \`variables.js\` and do the following:
+
+1. Store your name in a string variable
+2. Store your age in a number variable
+3. Store whether you are learning backend in a boolean variable
+4. Build a sentence using a template literal
+5. Print each variable and also print its type using \`typeof\`
+6. Convert the string \`'2500'\` into a number and add \`500\`
+
+Then explain, in words, why JavaScript treated \`'2500'\` differently before conversion and after conversion.
+`,
+
     control_flow_nodejs: `
 # Control Flow — Conditions & Loops in JavaScript
 
