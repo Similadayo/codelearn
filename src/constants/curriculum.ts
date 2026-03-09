@@ -394,8 +394,8 @@ export const curriculumData: CurriculumData = {
             stackScopedContent: true,
             modules: [
                 {
-                    id: 'novice',
-                    title: 'Novice (The Foundations)',
+                    id: 'phase1',
+                    title: 'Phase 1 — The Foundations',
                     description: 'Understanding HTML, CSS, and basic JavaScript.',
                     topics: [
                         { id: 'html', title: 'Semantic HTML5 & Accessibility', contentRef: 'frontend/novice/html.md' },
@@ -404,8 +404,8 @@ export const curriculumData: CurriculumData = {
                     ]
                 },
                 {
-                    id: 'beginner',
-                    title: 'Beginner (Modern UI Frameworks)',
+                    id: 'phase2',
+                    title: 'Phase 2 — Modern UI Frameworks',
                     description: 'Mastering component-driven development with React.',
                     topics: [
                         { id: 'react_core', title: 'React Core (JSX, Props, State hook)', contentRef: 'frontend/beginner/react_core.md' },
@@ -414,8 +414,8 @@ export const curriculumData: CurriculumData = {
                     ]
                 },
                 {
-                    id: 'intermediate',
-                    title: 'Intermediate (Advanced State & Frameworks)',
+                    id: 'phase3',
+                    title: 'Phase 3 — Advanced State & Frameworks',
                     description: 'Handling complex app states and server-side rendering.',
                     topics: [
                         { id: 'advanced_hooks', title: 'Advanced React Hooks (useReducer, useMemo)', contentRef: 'frontend/intermediate/advanced_hooks.md' },
@@ -424,8 +424,8 @@ export const curriculumData: CurriculumData = {
                     ]
                 },
                 {
-                    id: 'advanced',
-                    title: 'Advanced (Performance & Architecture)',
+                    id: 'phase4',
+                    title: 'Phase 4 — Performance & Architecture',
                     description: 'Optimizing rendering and building scalable frontends.',
                     topics: [
                         { id: 'performance', title: 'Web Vitals & Performance Optimization', contentRef: 'frontend/advanced/performance.md' },
@@ -434,8 +434,8 @@ export const curriculumData: CurriculumData = {
                     ]
                 },
                 {
-                    id: 'expert',
-                    title: 'Expert (Browser Internals & Graphics)',
+                    id: 'phase5',
+                    title: 'Phase 5 — Browser Internals & Graphics',
                     description: 'Deep diving into rendering engines and WebGL.',
                     topics: [
                         { id: 'browser_engine', title: 'How Browsers Work (Event Loop, Render Pipeline)', contentRef: 'frontend/expert/browser_engine.md' },
@@ -454,8 +454,8 @@ export const curriculumData: CurriculumData = {
             stackScopedContent: true,
             modules: [
                 {
-                    id: 'novice',
-                    title: 'Novice (Mobile Paradigms)',
+                    id: 'phase1',
+                    title: 'Phase 1 — Mobile Paradigms',
                     description: 'Introduction to mobile ecosystems and UI guidelines.',
                     topics: [
                         { id: 'mobile_os', title: 'iOS vs Android Ecosystems', contentRef: 'mobile/novice/mobile_os.md' },
@@ -463,8 +463,8 @@ export const curriculumData: CurriculumData = {
                     ]
                 },
                 {
-                    id: 'beginner',
-                    title: 'Beginner (Cross-Platform)',
+                    id: 'phase2',
+                    title: 'Phase 2 — Cross-Platform',
                     description: 'Building apps for both platforms simultaneously.',
                     topics: [
                         { id: 'react_native', title: 'Introduction to React Native', contentRef: 'mobile/beginner/react_native.md' },
@@ -472,8 +472,8 @@ export const curriculumData: CurriculumData = {
                     ]
                 },
                 {
-                    id: 'intermediate',
-                    title: 'Intermediate (Native Device Features)',
+                    id: 'phase3',
+                    title: 'Phase 3 — Native Device Features',
                     description: 'Accessing hardware APIs securely.',
                     topics: [
                         { id: 'camera_gps', title: 'Accessing Camera and Geolocation', contentRef: 'mobile/intermediate/camera_gps.md' },
@@ -482,8 +482,8 @@ export const curriculumData: CurriculumData = {
                     ]
                 },
                 {
-                    id: 'advanced',
-                    title: 'Advanced (Native Modules)',
+                    id: 'phase4',
+                    title: 'Phase 4 — Native Modules',
                     description: 'Bridging JavaScript/Dart to native Swift/Kotlin code.',
                     topics: [
                         { id: 'bridging', title: 'Writing Native Bridge Modules', contentRef: 'mobile/advanced/bridging.md' },
@@ -491,8 +491,8 @@ export const curriculumData: CurriculumData = {
                     ]
                 },
                 {
-                    id: 'expert',
-                    title: 'Expert (Publishing & At-Scale)',
+                    id: 'phase5',
+                    title: 'Phase 5 — Publishing & At-Scale',
                     description: 'App store deployment and performance profiling.',
                     topics: [
                         { id: 'profiling', title: 'Memory Profiling and Leak Detection', contentRef: 'mobile/expert/profiling.md' },
@@ -511,8 +511,8 @@ export const curriculumData: CurriculumData = {
             stackScopedContent: true,
             modules: [
                 {
-                    id: 'novice',
-                    title: 'Novice (Data Foundations)',
+                    id: 'phase1',
+                    title: 'Phase 1 — Data Foundations',
                     description: 'Python basics and mathematical foundations for data.',
                     topics: [
                         { id: 'python', title: 'Python Basics for Data Science', contentRef: 'data-science/novice/python.md' },
@@ -520,8 +520,8 @@ export const curriculumData: CurriculumData = {
                     ]
                 },
                 {
-                    id: 'beginner',
-                    title: 'Beginner (Data Manipulation)',
+                    id: 'phase2',
+                    title: 'Phase 2 — Data Manipulation',
                     description: 'Crucial tools for handling and visualizing data.',
                     topics: [
                         { id: 'pandas_numpy', title: 'Pandas & NumPy', contentRef: 'data-science/beginner/pandas_numpy.md' },
@@ -529,8 +529,8 @@ export const curriculumData: CurriculumData = {
                     ]
                 },
                 {
-                    id: 'intermediate',
-                    title: 'Intermediate (Machine Learning)',
+                    id: 'phase3',
+                    title: 'Phase 3 — Machine Learning',
                     description: 'Classic machine learning algorithms.',
                     topics: [
                         { id: 'sklearn', title: 'Supervised & Unsupervised Learning (Scikit-Learn)', contentRef: 'data-science/intermediate/sklearn.md' },
@@ -538,8 +538,8 @@ export const curriculumData: CurriculumData = {
                     ]
                 },
                 {
-                    id: 'advanced',
-                    title: 'Advanced (Deep Learning)',
+                    id: 'phase4',
+                    title: 'Phase 4 — Deep Learning',
                     description: 'Neural networks, NLP, and Computer Vision.',
                     topics: [
                         { id: 'neural_networks', title: 'Deep Learning with PyTorch/TensorFlow', contentRef: 'data-science/advanced/neural_networks.md' },
@@ -547,8 +547,8 @@ export const curriculumData: CurriculumData = {
                     ]
                 },
                 {
-                    id: 'expert',
-                    title: 'Expert (Generative AI & MLOps)',
+                    id: 'phase5',
+                    title: 'Phase 5 — Generative AI & MLOps',
                     description: 'Deploying models and Large Language Models.',
                     topics: [
                         { id: 'llms', title: 'Transformers & Large Language Models', contentRef: 'data-science/expert/llms.md' },
@@ -566,8 +566,8 @@ export const curriculumData: CurriculumData = {
             stackScopedContent: true,
             modules: [
                 {
-                    id: 'novice',
-                    title: 'Novice (Linux & Scripting)',
+                    id: 'phase1',
+                    title: 'Phase 1 — Linux & Scripting',
                     description: 'Core OS concepts and automation.',
                     topics: [
                         { id: 'linux', title: 'Linux Fundamentals & Administration', contentRef: 'devops/novice/linux.md' },
@@ -575,8 +575,8 @@ export const curriculumData: CurriculumData = {
                     ]
                 },
                 {
-                    id: 'beginner',
-                    title: 'Beginner (Containers & CI/CD)',
+                    id: 'phase2',
+                    title: 'Phase 2 — Containers & CI/CD',
                     description: 'Containerization and basic pipelines.',
                     topics: [
                         { id: 'docker', title: 'Docker Deep Dive', contentRef: 'devops/beginner/docker.md' },
@@ -584,8 +584,8 @@ export const curriculumData: CurriculumData = {
                     ]
                 },
                 {
-                    id: 'intermediate',
-                    title: 'Intermediate (Infrastructure as Code)',
+                    id: 'phase3',
+                    title: 'Phase 3 — Infrastructure as Code',
                     description: 'Managing cloud resources declaratively.',
                     topics: [
                         { id: 'terraform', title: 'Infrastructure as Code with Terraform', contentRef: 'devops/intermediate/terraform.md' },
@@ -593,8 +593,8 @@ export const curriculumData: CurriculumData = {
                     ]
                 },
                 {
-                    id: 'advanced',
-                    title: 'Advanced (Kubernetes)',
+                    id: 'phase4',
+                    title: 'Phase 4 — Kubernetes',
                     description: 'Container orchestration at scale.',
                     topics: [
                         { id: 'k8s_admin', title: 'Kubernetes Administration & Helm', contentRef: 'devops/advanced/k8s_admin.md' },
@@ -602,8 +602,8 @@ export const curriculumData: CurriculumData = {
                     ]
                 },
                 {
-                    id: 'expert',
-                    title: 'Expert (SRE & Reliability)',
+                    id: 'phase5',
+                    title: 'Phase 5 — SRE & Reliability',
                     description: 'Site Reliability Engineering and multi-cloud.',
                     topics: [
                         { id: 'chaos', title: 'Chaos Engineering & Reliability', contentRef: 'devops/expert/chaos.md' },
@@ -621,8 +621,8 @@ export const curriculumData: CurriculumData = {
             stackScopedContent: true,
             modules: [
                 {
-                    id: 'novice',
-                    title: 'Novice (Security Basics)',
+                    id: 'phase1',
+                    title: 'Phase 1 — Security Basics',
                     description: 'Fundamental concepts of security and networking.',
                     topics: [
                         { id: 'networking', title: 'Networking for Security (OSI, Ports)', contentRef: 'cybersecurity/novice/networking.md' },
@@ -630,8 +630,8 @@ export const curriculumData: CurriculumData = {
                     ]
                 },
                 {
-                    id: 'beginner',
-                    title: 'Beginner (Web Vulnerabilities)',
+                    id: 'phase2',
+                    title: 'Phase 2 — Web Vulnerabilities',
                     description: 'Understanding how applications are compromised.',
                     topics: [
                         { id: 'owasp', title: 'OWASP Top 10 (SQLi, XSS, CSRF)', contentRef: 'cybersecurity/beginner/owasp.md' },
@@ -639,8 +639,8 @@ export const curriculumData: CurriculumData = {
                     ]
                 },
                 {
-                    id: 'intermediate',
-                    title: 'Intermediate (Penetration Testing)',
+                    id: 'phase3',
+                    title: 'Phase 3 — Penetration Testing',
                     description: 'Hacking systems ethically.',
                     topics: [
                         { id: 'recon', title: 'Reconnaissance and Enumeration', contentRef: 'cybersecurity/intermediate/recon.md' },
@@ -648,8 +648,8 @@ export const curriculumData: CurriculumData = {
                     ]
                 },
                 {
-                    id: 'advanced',
-                    title: 'Advanced (Defense & Forensics)',
+                    id: 'phase4',
+                    title: 'Phase 4 — Defense & Forensics',
                     description: 'Protecting systems and incident response.',
                     topics: [
                         { id: 'incident_response', title: 'Incident Response Procedures', contentRef: 'cybersecurity/advanced/incident_response.md' },
@@ -657,8 +657,8 @@ export const curriculumData: CurriculumData = {
                     ]
                 },
                 {
-                    id: 'expert',
-                    title: 'Expert (Advanced Topics)',
+                    id: 'phase5',
+                    title: 'Phase 5 — Advanced Topics',
                     description: 'Reverse engineering and threat hunting.',
                     topics: [
                         { id: 'reverse_engineering', title: 'Malware Analysis & Reverse Engineering', contentRef: 'cybersecurity/expert/reverse_engineering.md' },

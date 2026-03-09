@@ -7,7 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "generate-content": "node scripts/generate-content.mjs"
+    "generate-content": "tsx scripts/generate-curriculum-content.ts"
   },
   "dependencies": {
     "@google/genai": "^1.44.0",
