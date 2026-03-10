@@ -29,10 +29,10 @@ function trackProgress(trackId: string, progress: Record<string, { completed: bo
 
 function Stat({ label, value, note }: { label: string; value: string | number; note: string }) {
     return (
-        <div className="glass-panel" style={{ padding: '1.25rem' }}>
-            <div className="curriculum-side-label">{label}</div>
-            <div style={{ fontSize: '2rem', fontWeight: 800 }}>{value}</div>
-            <p style={{ color: 'var(--text-secondary)' }}>{note}</p>
+        <div className="dash-stat">
+            <div className="dash-stat-label">{label}</div>
+            <div className="dash-stat-value">{value}</div>
+            <p className="dash-stat-note">{note}</p>
         </div>
     );
 }
@@ -83,7 +83,7 @@ export default function Dashboard() {
 
     if (!user) {
         return (
-            <div style={{ maxWidth: '840px', margin: '0 auto', padding: '4rem 1.25rem' }}>
+            <div className="dashboard-shell" style={{ maxWidth: '840px' }}>
                 <div className="glass-panel" style={{ padding: '2rem' }}>
                     <h1 style={{ fontSize: '2rem', marginBottom: '0.75rem' }}>Dashboard access requires an account</h1>
                     <p style={{ color: 'var(--text-secondary)', marginBottom: '1rem' }}>Students get progress, bookmarks, and review history. Lecturers get grading, cohorts, and platform analytics.</p>
@@ -98,7 +98,7 @@ export default function Dashboard() {
 
     if (user.role === 'student') {
         return (
-            <div style={{ padding: '2rem 1.25rem', maxWidth: '1180px', margin: '0 auto', display: 'grid', gap: '1rem' }}>
+            <div className="dashboard-shell">
                 <div className="glass-panel" style={{ padding: '1.5rem' }}>
                     <h1 style={{ fontSize: '2.1rem', marginBottom: '0.4rem' }}>Student Dashboard</h1>
                     <p style={{ color: 'var(--text-secondary)', marginBottom: '1rem' }}>Track your learning, pick up where you stopped, and keep lecturer feedback in one place.</p>
@@ -108,7 +108,7 @@ export default function Dashboard() {
                         {!user.onboardingCompleted && <Link href="/onboarding" className="btn-ghost">Finish onboarding</Link>}
                     </div>
                 </div>
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(210px, 1fr))', gap: '1rem' }}>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1.25rem' }}>
                     <Stat label="Completed" value={completedTopics} note="topics marked complete" />
                     <Stat label="Bookmarks" value={bookmarks.length} note="saved lessons" />
                     <Stat label="Submissions" value={studentSubmissions.length} note="work sent for review" />
@@ -178,12 +178,12 @@ export default function Dashboard() {
     }
 
     return (
-        <div style={{ padding: '2rem 1.25rem', maxWidth: '1240px', margin: '0 auto', display: 'grid', gap: '1rem' }}>
+        <div className="dashboard-shell">
             <div className="glass-panel" style={{ padding: '1.5rem' }}>
                 <h1 style={{ fontSize: '2.1rem', marginBottom: '0.4rem' }}>Lecturer Dashboard</h1>
                 <p style={{ color: 'var(--text-secondary)' }}>Review submissions, manage cohorts, track student activity, and monitor lesson coverage.</p>
             </div>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(210px, 1fr))', gap: '1rem' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1.25rem' }}>
                 <Stat label="Pending" value={lecturerSubmissions.filter(([, submission]) => submission.status === 'pending').length} note="submissions awaiting review" />
                 <Stat label="Students" value={students.length} note="student accounts available" />
                 <Stat label="Average grade" value={averageGrade} note="across graded work" />

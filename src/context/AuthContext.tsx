@@ -29,8 +29,17 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-async function parseJson<T>(response: Response): Promise<T> {
-    return response.json() as Promise<T>;
+async function parseJson<T>(response: Response): Promise<T | null> {
+    const text = await response.text();
+    if (!text.trim()) {
+        return null;
+    }
+
+    try {
+        return JSON.parse(text) as T;
+    } catch {
+        return null;
+    }
 }
 
 export function AuthProvider({ children }: { children: ReactNode }) {
@@ -42,17 +51,20 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         try {
             const userResponse = await fetch('/api/auth/session', { cache: 'no-store' });
             const userPayload = await parseJson<{ user: User | null }>(userResponse);
-            setUser(userPayload.user);
+            setUser(userPayload?.user ?? null);
 
-            if (userPayload.user) {
+            if (userPayload?.user) {
                 const stateResponse = await fetch('/api/platform/state', { cache: 'no-store' });
                 if (stateResponse.ok) {
                     const statePayload = await parseJson<{ users: User[] }>(stateResponse);
-                    setUsers(statePayload.users ?? []);
+                    setUsers(statePayload?.users ?? []);
                 }
             } else {
                 setUsers([]);
             }
+        } catch {
+            setUser(null);
+            setUsers([]);
         } finally {
             setIsHydrated(true);
         }
@@ -70,9 +82,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         });
         if (!response.ok) {
             const payload = await parseJson<{ error?: string }>(response);
-            return { ok: false, error: payload.error || 'Invalid email or password.' };
+            return { ok: false, error: payload?.error || 'Invalid email or password.' };
         }
         const payload = await parseJson<{ user: User }>(response);
+        if (!payload?.user) {
+            return { ok: false, error: 'Sign in failed. The server did not return a valid response.' };
+        }
         setUser(payload.user);
         await refreshSession();
         return { ok: true };
@@ -86,9 +101,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         });
         if (!response.ok) {
             const payload = await parseJson<{ error?: string }>(response);
-            return { ok: false, error: payload.error || 'Unable to create account.' };
+            return { ok: false, error: payload?.error || 'Unable to create account.' };
         }
         const payload = await parseJson<{ user: User }>(response);
+        if (!payload?.user) {
+            return { ok: false, error: 'Sign up failed. The server did not return a valid response.' };
+        }
         setUser(payload.user);
         await refreshSession();
         return { ok: true };
@@ -102,7 +120,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         });
         if (!response.ok) return;
         const payload = await parseJson<{ user: User | null }>(response);
-        setUser(payload.user);
+        setUser(payload?.user ?? null);
         await refreshSession();
     };
 

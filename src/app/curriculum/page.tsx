@@ -109,31 +109,33 @@ function CurriculumContent() {
 
     return (
         <div className="curriculum-shell">
-            <div className="curriculum-track-bar glass-panel">
-                {curriculumData.tracks.map((track) => {
-                    const trackStyle = trackConfig[track.id] || trackConfig.backend;
-                    const TrackIcon = trackStyle.icon;
-                    const isActive = track.id === activeTrackId;
-                    return (
-                        <Link
-                            key={track.id}
-                            href={`/curriculum?track=${track.id}`}
-                            className="curriculum-track-chip"
-                            style={{
-                                background: isActive ? `${trackStyle.color}20` : 'rgba(255,255,255,0.02)',
-                                borderColor: isActive ? `${trackStyle.color}40` : 'rgba(255,255,255,0.06)',
-                            }}
-                        >
-                            <span
-                                className="curriculum-track-chip-icon"
-                                style={{ background: isActive ? trackStyle.gradient : 'rgba(255,255,255,0.06)' }}
+            <div className="curriculum-track-bar-wrapper">
+                <div className="curriculum-track-bar glass-panel">
+                    {curriculumData.tracks.map((track) => {
+                        const trackStyle = trackConfig[track.id] || trackConfig.backend;
+                        const TrackIcon = trackStyle.icon;
+                        const isActive = track.id === activeTrackId;
+                        return (
+                            <Link
+                                key={track.id}
+                                href={`/curriculum?track=${track.id}`}
+                                className="curriculum-track-chip"
+                                style={{
+                                    background: isActive ? `${trackStyle.color}20` : 'rgba(255,255,255,0.02)',
+                                    borderColor: isActive ? `${trackStyle.color}40` : 'rgba(255,255,255,0.06)',
+                                }}
                             >
-                                <TrackIcon size={14} color={isActive ? 'white' : 'var(--text-muted)'} />
-                            </span>
-                            <span>{track.title}</span>
-                        </Link>
-                    );
-                })}
+                                <span
+                                    className="curriculum-track-chip-icon"
+                                    style={{ background: isActive ? trackStyle.gradient : 'rgba(255,255,255,0.06)' }}
+                                >
+                                    <TrackIcon size={14} color={isActive ? 'white' : 'var(--text-muted)'} />
+                                </span>
+                                <span>{track.title}</span>
+                            </Link>
+                        );
+                    })}
+                </div>
             </div>
 
             {needsLangPicker ? (

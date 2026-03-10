@@ -20,7 +20,7 @@ const featureHighlights = [
     {
         icon: BookOpen,
         title: 'Deeply Detailed Content',
-        desc: 'Every topic goes far beyond surface-level. You\'ll understand the why, not just the how.',
+        desc: "Every topic goes far beyond surface-level. You'll understand the why, not just the how.",
         color: '#6366f1',
     },
     {
@@ -41,10 +41,7 @@ export default function Home() {
     return (
         <main style={{ minHeight: '100vh' }}>
             {/* HERO SECTION */}
-            <section style={{
-                maxWidth: '900px', margin: '0 auto', padding: '5rem 2rem 4rem',
-                textAlign: 'center',
-            }}>
+            <section className="page-shell" style={{ padding: '5rem 0 4rem', textAlign: 'center' }}>
                 <div style={{
                     display: 'inline-flex', alignItems: 'center', gap: '0.5rem',
                     padding: '0.3rem 1rem', borderRadius: '9999px',
@@ -65,9 +62,9 @@ export default function Home() {
 
                 <p style={{
                     fontSize: '1.15rem', color: 'var(--text-secondary)', lineHeight: 1.8,
-                    maxWidth: '640px', margin: '0 auto 2.5rem',
+                    maxWidth: '600px', margin: '0 auto 2.5rem',
                 }}>
-                    From "What is the Internet?" to designing distributed systems at scale.
+                    From &quot;What is the Internet?&quot; to designing distributed systems at scale.
                     Deeply detailed lessons, real exercises, and expert grading — all in one place.
                 </p>
 
@@ -86,7 +83,7 @@ export default function Home() {
             </section>
 
             {/* TRACK CARDS */}
-            <section style={{ maxWidth: '1300px', margin: '0 auto', padding: '0 2rem 5rem' }}>
+            <section style={{ maxWidth: '1260px', margin: '0 auto', padding: '0 1.5rem 5rem' }}>
                 <div style={{ textAlign: 'center', marginBottom: '3rem' }}>
                     <h2 className="heading-lg" style={{ marginBottom: '0.75rem' }}>
                         Choose Your Path
@@ -98,8 +95,8 @@ export default function Home() {
 
                 <div style={{
                     display: 'grid',
-                    gridTemplateColumns: 'repeat(auto-fill, minmax(340px, 1fr))',
-                    gap: '1.5rem'
+                    gridTemplateColumns: 'repeat(auto-fill, minmax(290px, 1fr))',
+                    gap: '1.25rem',
                 }}>
                     {curriculumData.tracks.map((track) => {
                         const config = trackConfig[track.id] || trackConfig.backend;
@@ -154,32 +151,22 @@ export default function Home() {
             </section>
 
             {/* WHY SECTION */}
-            <section style={{
-                maxWidth: '1100px', margin: '0 auto', padding: '0 2rem 6rem',
-            }}>
+            <section className="page-shell" style={{ padding: '0 0 6rem' }}>
                 <div className="section-divider" />
                 <div style={{ textAlign: 'center', marginBottom: '3rem' }}>
                     <h2 className="heading-lg" style={{ marginBottom: '0.5rem' }}>Why CodeLearn?</h2>
+                    <p style={{ color: 'var(--text-secondary)', maxWidth: '480px', margin: '0 auto' }}>
+                        Built for serious learners who want to go beyond tutorials.
+                    </p>
                 </div>
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '1.5rem' }}>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: '1.25rem' }}>
                     {featureHighlights.map(f => (
-                        <div key={f.title} style={{
-                            padding: '2rem',
-                            border: '1px solid rgba(255,255,255,0.06)',
-                            borderRadius: '16px',
-                            background: 'rgba(255,255,255,0.02)',
-                        }}>
-                            <div style={{
-                                width: '44px', height: '44px', borderRadius: '10px',
-                                background: `${f.color}18`, display: 'flex', alignItems: 'center',
-                                justifyContent: 'center', marginBottom: '1.25rem',
-                            }}>
-                                <f.icon size={20} color={f.color} />
+                        <div key={f.title} className="feature-card">
+                            <div className="feature-card-icon" style={{ background: `${f.color}18` }}>
+                                <f.icon size={22} color={f.color} />
                             </div>
-                            <h3 style={{ fontSize: '1.05rem', fontWeight: 700, marginBottom: '0.5rem', color: 'var(--text-primary)' }}>
-                                {f.title}
-                            </h3>
-                            <p style={{ fontSize: '0.9rem', color: 'var(--text-secondary)', lineHeight: 1.7 }}>{f.desc}</p>
+                            <h3 className="feature-card-title">{f.title}</h3>
+                            <p className="feature-card-desc">{f.desc}</p>
                         </div>
                     ))}
                 </div>
