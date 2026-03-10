@@ -1,0 +1,159 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  student
+  lecturer
+}
+
+enum SubmissionStatus {
+  pending
+  graded
+}
+
+enum NotificationKind {
+  info
+  success
+  warning
+}
+
+enum ActivityType {
+  bookmark_added
+  bookmark_removed
+  topic_completed
+  submission_created
+  submission_graded
+  cohort_created
+  cohort_joined
+}
+
+model User {
+  id                  String             @id @default(cuid())
+  role                Role
+  name                String
+  email               String             @unique
+  passwordHash        String
+  demoMode            Boolean            @default(false)
+  onboardingCompleted Boolean            @default(false)
+  createdAt           DateTime           @default(now())
+  preferredTrackId    String?
+  preferredStackId    String?
+  studyGoal           String?
+  sessions            Session[]
+  progressEntries     Progress[]
+  submissions         Submission[]
+  bookmarks           Bookmark[]
+  notifications       Notification[]
+  activityLogs        ActivityLog[]
+  lecturerCohorts     Cohort[]           @relation("LecturerCohorts")
+  cohortMemberships   CohortMembership[]
+}
+
+model Session {
+  token     String   @id
+  userId    String
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+model Progress {
+  id          String   @id @default(cuid())
+  userId      String
+  topicKey    String
+  completed   Boolean  @default(true)
+  completedAt DateTime
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, topicKey])
+  @@index([userId])
+}
+
+model Submission {
+  id          String           @id
+  topicKey    String
+  trackId     String
+  moduleId    String
+  topicId     String
+  userId      String
+  userName    String
+  code        String
+  status      SubmissionStatus @default(pending)
+  grade       String?
+  feedback    String?
+  submittedAt DateTime         @default(now())
+  gradedAt    DateTime?
+  user        User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([status, submittedAt])
+}
+
+model Bookmark {
+  id        String   @id @default(cuid())
+  userId    String
+  topicKey  String
+  trackId   String
+  moduleId  String
+  topicId   String
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, topicKey])
+  @@index([userId])
+}
+
+model Notification {
+  id        String           @id
+  userId    String
+  title     String
+  message   String
+  kind      NotificationKind
+  link      String?
+  read      Boolean          @default(false)
+  createdAt DateTime         @default(now())
+  user      User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, createdAt])
+}
+
+model ActivityLog {
+  id          String       @id
+  userId      String
+  type        ActivityType
+  description String
+  createdAt   DateTime     @default(now())
+  user        User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, createdAt])
+}
+
+model Cohort {
+  id         String             @id
+  name       String
+  lecturerId String
+  createdAt  DateTime           @default(now())
+  lecturer   User               @relation("LecturerCohorts", fields: [lecturerId], references: [id], onDelete: Cascade)
+  members    CohortMembership[]
+
+  @@index([lecturerId, createdAt])
+}
+
+model CohortMembership {
+  id        String   @id @default(cuid())
+  cohortId   String
+  studentId  String
+  createdAt  DateTime @default(now())
+  cohort     Cohort   @relation(fields: [cohortId], references: [id], onDelete: Cascade)
+  student    User     @relation(fields: [studentId], references: [id], onDelete: Cascade)
+
+  @@unique([cohortId, studentId])
+  @@index([studentId])
+}

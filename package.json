@@ -7,10 +7,14 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
+    "prisma:generate": "prisma generate",
+    "prisma:push": "prisma db push",
+    "platform:import": "tsx scripts/import-platform-store.ts",
     "generate-content": "tsx scripts/generate-curriculum-content.ts"
   },
   "dependencies": {
     "@google/genai": "^1.44.0",
+    "@prisma/client": "^6.16.2",
     "dotenv": "^17.3.1",
     "lucide-react": "latest",
     "next": "14.2.5",
@@ -26,6 +30,7 @@
     "@types/react-dom": "^19.2.3",
     "eslint": "8",
     "eslint-config-next": "14.2.5",
+    "prisma": "^6.16.2",
     "typescript": "^5.9.3"
   }
 }
