@@ -24,12 +24,14 @@ interface TopicPageProps {
 export default function TopicPage({ params }: TopicPageProps) {
   const { trackId, moduleId, topicId } = params;
   const { user } = useAuth();
-  const { progress, markTopicCompleted, submitExercise, submissions } = useAppData();
+  const { progress, markTopicCompleted, submitExercise, submissions, toggleBookmark, isBookmarked } = useAppData();
   const searchParams = useSearchParams();
   const selectedLang = searchParams.get('lang') || '';
 
   const [codeData, setCodeData] = useState('');
   const [submitted, setSubmitted] = useState(false);
+  const [contentLoading, setContentLoading] = useState(true);
+  const [contentError, setContentError] = useState<string | null>(null);
   const track = curriculumData.tracks.find((entry) => entry.id === trackId);
   const selectedLangInfo = track?.supportedLanguages?.find((entry) => entry.id === selectedLang);
   const moduleInfo = track?.modules.find((entry) => entry.id === moduleId);
@@ -41,12 +43,17 @@ export default function TopicPage({ params }: TopicPageProps) {
   const topicKey = buildTopicKey(trackId, moduleId, topicId);
   const submissionId = user ? buildSubmissionId(user.id, topicKey) : '';
   const existingSubmission = submissionId ? submissions[submissionId] : undefined;
-  const isCompleted = !!progress[topicKey];
+  const isCompleted = !!progress[topicKey]?.completed;
+  const isSaved = isBookmarked(topicKey);
   const estimatedReadingTime = Math.max(12, Math.round(content.split(/\s+/).length / 190));
+  const previousTopic = topicIndex > 0 ? moduleInfo?.topics[topicIndex - 1] : null;
+  const nextTopic = moduleInfo && topicIndex < moduleInfo.topics.length - 1 ? moduleInfo.topics[topicIndex + 1] : null;
 
   useEffect(() => {
     setContent(fallbackContent);
     setContentSource('fallback');
+    setContentLoading(true);
+    setContentError(null);
   }, [fallbackContent]);
 
   useEffect(() => {
@@ -57,6 +64,8 @@ export default function TopicPage({ params }: TopicPageProps) {
       query.set('lang', selectedLang);
     }
 
+    setContentLoading(true);
+    setContentError(null);
     fetch(`/api/content?${query.toString()}`, { signal: controller.signal })
       .then(async (response) => {
         if (!response.ok) {
@@ -76,7 +85,11 @@ export default function TopicPage({ params }: TopicPageProps) {
       .catch((error) => {
         if (error.name !== 'AbortError') {
           console.error('Failed to load topic markdown:', error);
+          setContentError('The lesson could not be refreshed from the content API. Showing the best available local version.');
         }
+      })
+      .finally(() => {
+        setContentLoading(false);
       });
 
     return () => controller.abort();
@@ -131,10 +144,19 @@ export default function TopicPage({ params }: TopicPageProps) {
                   <CheckCircle2 size={11} /> Completed
                 </span>
               )}
-              {user?.demoMode && <span className="tag tag-novice">Local demo state</span>}
               <span className={`lesson-badge ${contentSource === 'file' ? 'lesson-badge-info' : 'lesson-badge-warn'}`}>
                 {contentSource === 'file' ? 'Authored Markdown' : 'Generated Fallback'}
               </span>
+              {user && (
+                <button
+                  type="button"
+                  className="lesson-badge lesson-badge-info"
+                  style={{ cursor: 'pointer' }}
+                  onClick={() => toggleBookmark({ topicKey, trackId, moduleId, topicId })}
+                >
+                  <BookMarked size={11} /> {isSaved ? 'Bookmarked' : 'Save'}
+                </button>
+              )}
             </div>
           </div>
 
@@ -155,6 +177,16 @@ export default function TopicPage({ params }: TopicPageProps) {
         </div>
 
         <article className="lesson-article glass-panel">
+          {contentLoading && (
+            <div className="lesson-callout lesson-callout-info" style={{ marginBottom: '1rem' }}>
+              <span>Loading lesson content…</span>
+            </div>
+          )}
+          {contentError && (
+            <div className="lesson-callout lesson-callout-warn" style={{ marginBottom: '1rem' }}>
+              <span>{contentError}</span>
+            </div>
+          )}
           <div className="markdown-content">
             <ReactMarkdown
               components={{
@@ -237,21 +269,21 @@ export default function TopicPage({ params }: TopicPageProps) {
             </div>
             <div>
               <h2>Submit Your Work</h2>
-              <p>Saved locally in this browser for the active demo account.</p>
+              <p>Saved locally in this browser for the active signed-in account.</p>
             </div>
           </div>
 
           {!user && (
             <div className="lesson-callout lesson-callout-info">
               <Lock size={16} color="var(--accent-indigo)" />
-              <span>Start a student demo profile to submit exercises and track progress locally.</span>
+              <span>Sign in as a student to submit work, save lessons, and keep progress across visits.</span>
             </div>
           )}
 
           {user?.role === 'student' && !existingSubmission && !submitted && (
             <div>
               <p className="lesson-supporting-copy">
-                Write your answer, code, or explanation in the box below. Be thorough. The lecturer demo account can review what you submit later in the same browser.
+                Write your answer, code, or explanation in the box below. Be thorough. Lecturer accounts on this device can review what you submit later.
               </p>
               <textarea
                 className="input"
@@ -305,7 +337,7 @@ export default function TopicPage({ params }: TopicPageProps) {
                   <div>
                     <p style={{ fontWeight: 600, color: 'var(--text-primary)', margin: 0 }}>Lecturer View</p>
                     <p style={{ color: 'var(--text-muted)', fontSize: '0.82rem', margin: 0 }}>
-                      Review submissions from every local demo student in this browser
+                      Review submissions from every learner account stored in this browser
                     </p>
                   </div>
                 </div>
@@ -327,6 +359,29 @@ export default function TopicPage({ params }: TopicPageProps) {
             </div>
           )}
         </section>
+
+        <div className="glass-panel" style={{ padding: '1.25rem', display: 'flex', justifyContent: 'space-between', gap: '1rem', flexWrap: 'wrap', alignItems: 'center' }}>
+          <div>
+            {previousTopic ? (
+              <Link href={formatTopicPath(trackId, moduleId, previousTopic.id, selectedLang || undefined)} className="btn-ghost">
+                Previous: {previousTopic.title}
+              </Link>
+            ) : (
+              <span style={{ color: 'var(--text-secondary)', fontSize: '0.9rem' }}>Start of this phase</span>
+            )}
+          </div>
+          <div>
+            {nextTopic ? (
+              <Link href={formatTopicPath(trackId, moduleId, nextTopic.id, selectedLang || undefined)} className="btn">
+                Next: {nextTopic.title}
+              </Link>
+            ) : (
+              <Link href={`/curriculum?track=${trackId}${selectedLang ? `&lang=${selectedLang}` : ''}`} className="btn">
+                Back to track overview
+              </Link>
+            )}
+          </div>
+        </div>
       </section>
 
       <aside className="lesson-side">
@@ -359,7 +414,7 @@ export default function TopicPage({ params }: TopicPageProps) {
           <div className="lesson-topic-nav">
             {moduleInfo.topics.map((entry, index) => {
               const isCurrent = entry.id === topicId;
-              const isDone = !!progress[buildTopicKey(trackId, moduleId, entry.id)];
+              const isDone = !!progress[buildTopicKey(trackId, moduleId, entry.id)]?.completed;
               return (
                 <Link key={entry.id} href={formatTopicPath(trackId, moduleId, entry.id, selectedLang || undefined)} className="lesson-topic-nav-item" style={{
                   background: isCurrent ? 'rgba(99,102,241,0.12)' : 'rgba(255,255,255,0.02)',

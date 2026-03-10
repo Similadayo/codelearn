@@ -3,9 +3,12 @@ import { Suspense, useEffect, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { curriculumData, getTrackSupportedLanguages, topicUsesStackVariant } from '@/constants/curriculum';
 import LanguagePicker from '@/components/LanguagePicker';
+import { useAuth } from '@/context/AuthContext';
+import { useAppData } from '@/context/AppDataContext';
 import Link from 'next/link';
 import { Server, Monitor, Smartphone, Database, Cloud, Shield, ChevronRight, Code2, Layers3 } from 'lucide-react';
 import type { ElementType } from 'react';
+import { buildTopicKey } from '@/lib/lessonKeys';
 
 const trackConfig: Record<string, { icon: ElementType; color: string; gradient: string }> = {
     backend: { icon: Server, color: '#6366f1', gradient: 'linear-gradient(135deg, #6366f1, #8b5cf6)' },
@@ -41,6 +44,8 @@ function getStackStorageKey(trackId: string) {
 function CurriculumContent() {
     const searchParams = useSearchParams();
     const router = useRouter();
+    const { user } = useAuth();
+    const { progress, bookmarks, getResumeTopicPath } = useAppData();
     const activeTrackId = searchParams.get('track') || 'backend';
     const activeTrack = curriculumData.tracks.find((track) => track.id === activeTrackId);
     const config = trackConfig[activeTrackId] || trackConfig.backend;
@@ -48,8 +53,11 @@ function CurriculumContent() {
 
     const [selectedLang, setSelectedLang] = useState<string | null>(null);
     const [langLoaded, setLangLoaded] = useState(false);
+    const [topicQuery, setTopicQuery] = useState('');
+    const [phaseFilter, setPhaseFilter] = useState('all');
     const trackStacks = getTrackSupportedLanguages(activeTrackId);
     const trackNeedsStack = trackStacks.length > 0;
+    const resumePath = getResumeTopicPath();
 
     useEffect(() => {
         const langFromUrl = searchParams.get('lang');
@@ -76,6 +84,20 @@ function CurriculumContent() {
 
     const needsLangPicker = trackNeedsStack && langLoaded && !selectedLang;
     const selectedLangInfo = trackStacks.find((stack) => stack.id === selectedLang);
+    const query = topicQuery.trim().toLowerCase();
+    const visibleModules = activeTrack
+        ? activeTrack.modules
+            .filter((module) => phaseFilter === 'all' || module.id === phaseFilter)
+            .map((module) => ({
+                ...module,
+                topics: module.topics.filter((topic) => !query || topic.title.toLowerCase().includes(query)),
+            }))
+            .filter((module) => module.topics.length > 0)
+        : [];
+    const activeTrackCompleted = activeTrack?.modules.reduce((sum, module) => {
+        return sum + module.topics.filter((topic) => progress[buildTopicKey(activeTrack.id, module.id, topic.id)]?.completed).length;
+    }, 0) ?? 0;
+    const activeTrackBookmarks = bookmarks.filter((bookmark) => bookmark.trackId === activeTrackId).length;
 
     if (!activeTrack) {
         return (
@@ -158,11 +180,49 @@ function CurriculumContent() {
                                     <span className="curriculum-stat-value">{trackStacks.length || 1}</span>
                                     <span className="curriculum-stat-label">Stacks</span>
                                 </div>
+                                <div className="curriculum-stat-card">
+                                    <span className="curriculum-stat-value">{activeTrackCompleted}</span>
+                                    <span className="curriculum-stat-label">Done</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className="glass-panel" style={{ padding: '1.25rem', display: 'grid', gap: '1rem', marginBottom: '1rem' }}>
+                            <div style={{ display: 'flex', justifyContent: 'space-between', gap: '1rem', flexWrap: 'wrap', alignItems: 'center' }}>
+                                <div>
+                                    <h2 style={{ fontSize: '1.1rem', marginBottom: '0.2rem' }}>Find the right lesson faster</h2>
+                                    <p style={{ color: 'var(--text-secondary)' }}>
+                                        Search topics, narrow to a phase, and jump back into your next lesson.
+                                    </p>
+                                </div>
+                                <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap' }}>
+                                    {resumePath && <Link href={resumePath} className="btn">Resume</Link>}
+                                    {user ? (
+                                        <Link href="/dashboard" className="btn-ghost">{activeTrackBookmarks} bookmarks</Link>
+                                    ) : (
+                                        <Link href="/auth" className="btn-ghost">Sign in to track progress</Link>
+                                    )}
+                                </div>
+                            </div>
+                            <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap' }}>
+                                <input
+                                    className="input"
+                                    placeholder="Search topics in this track"
+                                    value={topicQuery}
+                                    onChange={(event) => setTopicQuery(event.target.value)}
+                                    style={{ minWidth: '260px', flex: '1 1 320px' }}
+                                />
+                                <select className="input" value={phaseFilter} onChange={(event) => setPhaseFilter(event.target.value)}>
+                                    <option value="all">All phases</option>
+                                    {activeTrack.modules.map((module) => (
+                                        <option key={module.id} value={module.id}>{module.title}</option>
+                                    ))}
+                                </select>
                             </div>
                         </div>
 
                         <div className="curriculum-phase-grid">
-                            {activeTrack.modules.map((module, moduleIndex) => {
+                            {visibleModules.map((module, moduleIndex) => {
                                 const tagClass = levelTagMap[module.id] || 'tag-novice';
                                 const phaseColor = phaseColors[module.id] || config.color;
                                 const phaseLabel = phaseLabels[module.id] || module.id.toUpperCase();
@@ -198,28 +258,43 @@ function CurriculumContent() {
                                         </div>
 
                                         <div className="curriculum-topic-list">
-                                            {module.topics.map((topic, topicIndex) => (
-                                                <Link
-                                                    key={topic.id}
-                                                    href={`/curriculum/${activeTrack.id}/${module.id}/${topic.id}${selectedLang ? `?lang=${selectedLang}` : ''}`}
-                                                    className="curriculum-topic-item"
-                                                >
-                                                    <span className="topic-number">{String(topicIndex + 1).padStart(2, '0')}</span>
-                                                    <span className="curriculum-topic-title">{topic.title}</span>
-                                                    <div className="curriculum-topic-tail">
-                                                        {topicUsesStackVariant(activeTrack, topic) && selectedLangInfo && (
-                                                            <span style={{ fontSize: '0.72rem', color: selectedLangInfo.color }}>
-                                                                {selectedLangInfo.emoji}
-                                                            </span>
-                                                        )}
-                                                        <ChevronRight size={14} color="var(--text-muted)" />
-                                                    </div>
-                                                </Link>
-                                            ))}
+                                            {module.topics.map((topic, topicIndex) => {
+                                                const topicKey = buildTopicKey(activeTrack.id, module.id, topic.id);
+                                                const isDone = !!progress[topicKey]?.completed;
+                                                return (
+                                                    <Link
+                                                        key={topic.id}
+                                                        href={`/curriculum/${activeTrack.id}/${module.id}/${topic.id}${selectedLang ? `?lang=${selectedLang}` : ''}`}
+                                                        className="curriculum-topic-item"
+                                                    >
+                                                        <span className="topic-number">{isDone ? 'OK' : String(topicIndex + 1).padStart(2, '0')}</span>
+                                                        <span className="curriculum-topic-title">{topic.title}</span>
+                                                        <div className="curriculum-topic-tail">
+                                                            {isDone && (
+                                                                <span style={{ fontSize: '0.72rem', color: '#86efac' }}>done</span>
+                                                            )}
+                                                            {topicUsesStackVariant(activeTrack, topic) && selectedLangInfo && (
+                                                                <span style={{ fontSize: '0.72rem', color: selectedLangInfo.color }}>
+                                                                    {selectedLangInfo.emoji}
+                                                                </span>
+                                                            )}
+                                                            <ChevronRight size={14} color="var(--text-muted)" />
+                                                        </div>
+                                                    </Link>
+                                                );
+                                            })}
                                         </div>
                                     </article>
                                 );
                             })}
+                            {visibleModules.length === 0 && (
+                                <div className="glass-panel" style={{ padding: '1.5rem' }}>
+                                    <h3 style={{ fontSize: '1.1rem', marginBottom: '0.5rem' }}>No topics matched this filter</h3>
+                                    <p style={{ color: 'var(--text-secondary)' }}>
+                                        Clear the search term or switch phase filters to see more of the curriculum.
+                                    </p>
+                                </div>
+                            )}
                         </div>
                     </section>
 

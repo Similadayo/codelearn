@@ -1,86 +1,125 @@
-﻿'use client';
-import { createContext, useContext, useEffect, useState, ReactNode } from 'react';
+'use client';
+import { createContext, useContext, useEffect, useMemo, useState, ReactNode } from 'react';
+import type { PublicUser as User, Role, UserPreferences } from '@/lib/platform-types';
 
-export type Role = 'student' | 'lecturer';
-
-export interface User {
-    id: string;
-    role: Role;
+interface SignUpInput {
     name: string;
-    demoMode: boolean;
+    email: string;
+    password: string;
+    role: Role;
 }
+
+interface SignInInput {
+    email: string;
+    password: string;
+}
+
+interface CompleteOnboardingInput extends UserPreferences {}
 
 interface AuthContextType {
     user: User | null;
-    login: (role: Role) => void;
-    logout: () => void;
+    users: User[];
+    isHydrated: boolean;
+    signIn: (input: SignInInput) => Promise<{ ok: boolean; error?: string }>;
+    signUp: (input: SignUpInput) => Promise<{ ok: boolean; error?: string }>;
+    completeOnboarding: (input: CompleteOnboardingInput) => Promise<void>;
+    refreshSession: () => Promise<void>;
+    logout: () => Promise<void>;
 }
-
-const STORAGE_KEY = 'codelearn_user';
-const STUDENT_COUNTER_KEY = 'codelearn_student_counter';
-const LECTURER_PROFILE_KEY = 'codelearn_lecturer_profile';
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-function createStudentProfile(): User {
-    const nextNumber = Number(localStorage.getItem(STUDENT_COUNTER_KEY) || '0') + 1;
-    localStorage.setItem(STUDENT_COUNTER_KEY, String(nextNumber));
-
-    return {
-        id: crypto.randomUUID(),
-        role: 'student',
-        name: `Demo Student ${nextNumber}`,
-        demoMode: true,
-    };
-}
-
-function getLecturerProfile(): User {
-    const savedLecturer = localStorage.getItem(LECTURER_PROFILE_KEY);
-    if (savedLecturer) {
-        return JSON.parse(savedLecturer) as User;
-    }
-
-    const lecturer: User = {
-        id: crypto.randomUUID(),
-        role: 'lecturer',
-        name: 'Demo Lecturer',
-        demoMode: true,
-    };
-
-    localStorage.setItem(LECTURER_PROFILE_KEY, JSON.stringify(lecturer));
-    return lecturer;
+async function parseJson<T>(response: Response): Promise<T> {
+    return response.json() as Promise<T>;
 }
 
 export function AuthProvider({ children }: { children: ReactNode }) {
     const [user, setUser] = useState<User | null>(null);
+    const [users, setUsers] = useState<User[]>([]);
     const [isHydrated, setIsHydrated] = useState(false);
 
-    useEffect(() => {
-        const savedUser = localStorage.getItem(STORAGE_KEY);
-        if (savedUser) {
-            setUser(JSON.parse(savedUser));
+    const refreshSession = async () => {
+        try {
+            const userResponse = await fetch('/api/auth/session', { cache: 'no-store' });
+            const userPayload = await parseJson<{ user: User | null }>(userResponse);
+            setUser(userPayload.user);
+
+            if (userPayload.user) {
+                const stateResponse = await fetch('/api/platform/state', { cache: 'no-store' });
+                if (stateResponse.ok) {
+                    const statePayload = await parseJson<{ users: User[] }>(stateResponse);
+                    setUsers(statePayload.users ?? []);
+                }
+            } else {
+                setUsers([]);
+            }
+        } finally {
+            setIsHydrated(true);
         }
-        setIsHydrated(true);
+    };
+
+    useEffect(() => {
+        void refreshSession();
     }, []);
 
-    const login = (role: Role) => {
-        const nextUser = role === 'student' ? createStudentProfile() : getLecturerProfile();
-        setUser(nextUser);
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(nextUser));
+    const signIn = async ({ email, password }: SignInInput) => {
+        const response = await fetch('/api/auth/signin', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email, password }),
+        });
+        if (!response.ok) {
+            const payload = await parseJson<{ error?: string }>(response);
+            return { ok: false, error: payload.error || 'Invalid email or password.' };
+        }
+        const payload = await parseJson<{ user: User }>(response);
+        setUser(payload.user);
+        await refreshSession();
+        return { ok: true };
     };
 
-    const logout = () => {
-        setUser(null);
-        localStorage.removeItem(STORAGE_KEY);
+    const signUp = async ({ name, email, password, role }: SignUpInput) => {
+        const response = await fetch('/api/auth/signup', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ name, email, password, role }),
+        });
+        if (!response.ok) {
+            const payload = await parseJson<{ error?: string }>(response);
+            return { ok: false, error: payload.error || 'Unable to create account.' };
+        }
+        const payload = await parseJson<{ user: User }>(response);
+        setUser(payload.user);
+        await refreshSession();
+        return { ok: true };
     };
+
+    const completeOnboarding = async (input: CompleteOnboardingInput) => {
+        const response = await fetch('/api/auth/onboarding', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(input),
+        });
+        if (!response.ok) return;
+        const payload = await parseJson<{ user: User | null }>(response);
+        setUser(payload.user);
+        await refreshSession();
+    };
+
+    const logout = async () => {
+        await fetch('/api/auth/logout', { method: 'POST' });
+        setUser(null);
+        setUsers([]);
+    };
+
+    const value = useMemo(
+        () => ({ user, users, isHydrated, signIn, signUp, completeOnboarding, refreshSession, logout }),
+        [user, users, isHydrated]
+    );
 
     if (!isHydrated) return null;
 
-    return (
-        <AuthContext.Provider value={{ user, login, logout }}>
-            {children}
-        </AuthContext.Provider>
-    );
+    return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
 
 export const useAuth = () => {
@@ -90,4 +129,3 @@ export const useAuth = () => {
     }
     return context;
 };
-
